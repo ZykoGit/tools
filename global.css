@@ -151,3 +151,63 @@ footer {
 .mt-1 { margin-top: 1rem; }
 .mt-2 { margin-top: 2rem; }
 .mt-3 { margin-top: 3rem; }
+.tool-container {
+    max-width: 900px;
+    margin: 0 auto;
+}
+
+.tool-section {
+    margin-bottom: 2rem;
+}
+
+textarea {
+    width: 100%;
+    height: 200px;
+    background: #1a1a1a;
+    color: #eee;
+    border: 1px solid #333;
+    border-radius: 8px;
+    padding: 1rem;
+    font-family: monospace;
+    font-size: 0.95rem;
+    resize: vertical;
+}
+
+.button-row {
+    margin-top: 1rem;
+    display: flex;
+    gap: 1rem;
+}
+
+button {
+    padding: 0.6rem 1.2rem;
+    background: #4a90e2;
+    border: none;
+    border-radius: 6px;
+    color: white;
+    cursor: pointer;
+    font-size: 1rem;
+    transition: 0.2s;
+}
+
+button:hover {
+    background: #357ac9;
+}
+
+.sample-box {
+    background: #1a1a1a;
+    padding: 1rem;
+    border-radius: 8px;
+    border: 1px solid #333;
+    overflow-x: auto;
+}
+
+.home-link {
+    color: #eee;
+    text-decoration: none;
+}
+
+.home-link:hover {
+    text-decoration: underline;
+}
+
