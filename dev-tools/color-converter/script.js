@@ -122,7 +122,7 @@ document.getElementById("convert-btn").addEventListener("click", () => {
             `RGB: rgb(${rgb.r}, ${rgb.g}, ${rgb.b})\n` +
             `HSL: hsl(${hsl.h}, ${hsl.s}%, ${hsl.l}%)`;
 
-        preview.style.background = hex;
+        preview.style.background = `rgb(${rgb.r}, ${rgb.g}, ${rgb.b})`;
 
         showToast("Converted");
     } catch {
