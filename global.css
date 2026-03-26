@@ -256,3 +256,13 @@ button:hover {
     color: #eee;
     width: 120px;
 }
+/* Hash algorithm dropdown */
+#hash-type {
+    margin-top: 0.5rem;
+    margin-bottom: 1rem;
+    padding: 0.5rem;
+    background: #1a1a1a;
+    color: #eee;
+    border: 1px solid #333;
+    border-radius: 6px;
+}
