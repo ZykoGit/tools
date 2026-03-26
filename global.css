@@ -348,4 +348,17 @@ button:hover {
     border-radius: 6px;
     width: 120px;
 }
+/* Markdown - HTML Converter */
+.mode-btn {
+    padding: 0.5rem 1rem;
+    border-radius: 6px;
+    border: 1px solid #333;
+    background: #1a1a1a;
+    color: #eee;
+    cursor: pointer;
+}
 
+.mode-btn.active {
+    background: #2d6cdf;
+    border-color: #2d6cdf;
+}
