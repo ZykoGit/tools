@@ -362,3 +362,13 @@ button:hover {
     background: #2d6cdf;
     border-color: #2d6cdf;
 }
+/* Case Converter */
+.case-btn {
+    padding: 0.4rem 0.8rem;
+    border-radius: 6px;
+    border: 1px solid #333;
+    background: #1a1a1a;
+    color: #eee;
+    cursor: pointer;
+    font-size: 0.9rem;
+}
