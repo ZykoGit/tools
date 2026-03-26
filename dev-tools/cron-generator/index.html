@@ -1,0 +1,77 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
+    <title>Cron Generator — Toolbox</title>
+
+    <link rel="stylesheet" href="../../global.css" />
+    <link rel="icon" type="image/png" href="../../favicon.png" />
+    <link rel="apple-touch-icon" href="../../favicon.png" />
+</head>
+
+<body>
+<header>
+    <h1><a href="../../" class="home-link">Toolbox</a></h1>
+    <p>Cron Generator</p>
+</header>
+
+<main class="tool-container">
+
+    <section class="tool-section">
+        <h2>Schedule</h2>
+
+        <label>Minutes</label>
+        <input id="min" placeholder="0-59 or *" />
+
+        <label>Hours</label>
+        <input id="hour" placeholder="0-23 or *" />
+
+        <label>Day of Month</label>
+        <input id="dom" placeholder="1-31 or *" />
+
+        <label>Month</label>
+        <input id="month" placeholder="1-12 or *" />
+
+        <label>Day of Week</label>
+        <input id="dow" placeholder="0-6 or *" />
+
+        <div class="button-row">
+            <button id="generate-btn">Generate</button>
+            <button id="clear-btn">Clear</button>
+        </div>
+    </section>
+
+    <section class="tool-section">
+        <h2>Cron Expression</h2>
+        <textarea id="output" readonly placeholder="Cron expression will appear here..."></textarea>
+
+        <div class="button-row">
+            <button id="copy-btn">Copy</button>
+            <button id="download-btn">Download</button>
+        </div>
+    </section>
+
+    <section class="tool-section">
+        <h2>Sample</h2>
+        <pre class="sample-box" id="sample-cron">
+0 3 * * *
+        </pre>
+
+        <div class="button-row sample-btn-row">
+            <button id="load-sample-btn">Load Sample</button>
+        </div>
+    </section>
+
+</main>
+
+<footer>
+    <p>© 2026 Toolbox — Zykonix</p>
+</footer>
+
+<div id="toast"></div>
+
+<script src="script.js"></script>
+</body>
+</html>
