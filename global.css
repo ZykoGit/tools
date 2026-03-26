@@ -288,6 +288,8 @@ button:hover {
 .diff-line {
     padding: 2px 6px;
     white-space: pre-wrap;
+    min-height: 1.2em; 
+    border-bottom: 1px solid #222; 
 }
 
 .diff-line.same {
