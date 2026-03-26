@@ -1,0 +1,83 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
+    <title>YAML ⇄ JSON Converter — Toolbox</title>
+
+    <link rel="stylesheet" href="../../global.css" />
+    <link rel="icon" type="image/png" href="../../favicon.png" />
+    <link rel="apple-touch-icon" href="../../favicon.png" />
+</head>
+
+<body>
+    <header>
+        <h1><a href="../../" class="home-link">Toolbox</a></h1>
+        <p>YAML ⇄ JSON Converter</p>
+    </header>
+
+    <main class="tool-container">
+
+        <!-- YAML Input -->
+        <section class="tool-section">
+            <h2>YAML Input</h2>
+            <textarea id="yaml-input" placeholder="Paste YAML here..."></textarea>
+
+            <div class="button-row">
+                <button id="yaml-to-json-btn">Convert YAML → JSON</button>
+            </div>
+        </section>
+
+        <!-- JSON Input -->
+        <section class="tool-section">
+            <h2>JSON Input</h2>
+            <textarea id="json-input" placeholder="Paste JSON here..."></textarea>
+
+            <div class="button-row">
+                <button id="json-to-yaml-btn">Convert JSON → YAML</button>
+            </div>
+        </section>
+
+        <!-- Output -->
+        <section class="tool-section">
+            <h2>Output</h2>
+            <textarea id="output" readonly placeholder="Converted output will appear here..."></textarea>
+
+            <div class="button-row">
+                <button id="copy-btn">Copy Output</button>
+                <button id="download-btn">Download Output</button>
+            </div>
+        </section>
+
+        <!-- Sample -->
+        <section class="tool-section">
+            <h2>Sample YAML</h2>
+            <pre class="sample-box" id="sample-yaml">
+name: Zyko
+project: Toolbox
+features:
+  - formatting
+  - conversion
+  - utilities
+active: true
+version: 1
+            </pre>
+
+            <div class="button-row sample-btn-row">
+                <button id="load-sample-btn">Load Sample</button>
+            </div>
+        </section>
+
+    </main>
+
+    <footer>
+        <p>© 2026 Toolbox — Zykonix</p>
+    </footer>
+
+    <div id="toast"></div>
+
+    <script src="https://cdn.jsdelivr.net/npm/js-yaml@4.1.0/dist/js-yaml.min.js"></script>
+    <script src="script.js"></script>
+</body>
+</html>
