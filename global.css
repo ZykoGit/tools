@@ -157,7 +157,7 @@ footer {
 }
 
 .tool-section {
-    margin-bottom: 2rem;
+    margin-bottom: 1rem;
 }
 
 textarea {
@@ -200,6 +200,10 @@ button:hover {
     border-radius: 8px;
     border: 1px solid #333;
     overflow-x: auto;
+}
+
+.sample-btb-row {
+   margin-top: 1rem;
 }
 
 .home-link {
