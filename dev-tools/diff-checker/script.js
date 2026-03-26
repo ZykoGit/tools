@@ -1,9 +1,10 @@
 const leftInput = document.getElementById("left-input");
 const rightInput = document.getElementById("right-input");
-const diffOutput = document.getElementById("diff-output");
+const leftDiff = document.getElementById("left-diff");
+const rightDiff = document.getElementById("right-diff");
 const toast = document.getElementById("toast");
 
-const MAX_SIZE = 5 * 1024 * 1024; // 5 MB
+const MAX_SIZE = 5 * 1024 * 1024;
 
 function showToast(msg) {
     toast.innerText = msg;
@@ -12,29 +13,51 @@ function showToast(msg) {
 }
 
 function checkSize(text) {
-    const size = new Blob([text]).size;
-    return size <= MAX_SIZE;
+    return new Blob([text]).size <= MAX_SIZE;
 }
 
-function simpleDiff(left, right) {
-    const leftLines = left.split("\n");
-    const rightLines = right.split("\n");
-    const maxLen = Math.max(leftLines.length, rightLines.length);
+function diffLines(a, b) {
+    const aLines = a.split("\n");
+    const bLines = b.split("\n");
+    const max = Math.max(aLines.length, bLines.length);
+
     const result = [];
 
-    for (let i = 0; i < maxLen; i++) {
-        const l = leftLines[i] ?? "";
-        const r = rightLines[i] ?? "";
+    for (let i = 0; i < max; i++) {
+        const left = aLines[i] ?? "";
+        const right = bLines[i] ?? "";
 
-        if (l === r) {
-            result.push("  " + l);
+        if (left === right) {
+            result.push({ type: "same", left, right });
+        } else if (!left && right) {
+            result.push({ type: "added", left, right });
+        } else if (left && !right) {
+            result.push({ type: "removed", left, right });
         } else {
-            if (l) result.push("- " + l);
-            if (r) result.push("+ " + r);
+            result.push({ type: "changed", left, right });
         }
     }
 
-    return result.join("\n");
+    return result;
+}
+
+function renderDiff(diff) {
+    leftDiff.innerHTML = "";
+    rightDiff.innerHTML = "";
+
+    diff.forEach((row, i) => {
+        const leftLine = document.createElement("div");
+        const rightLine = document.createElement("div");
+
+        leftLine.className = "diff-line " + row.type;
+        rightLine.className = "diff-line " + row.type;
+
+        leftLine.textContent = row.left || "";
+        rightLine.textContent = row.right || "";
+
+        leftDiff.appendChild(leftLine);
+        rightDiff.appendChild(rightLine);
+    });
 }
 
 document.getElementById("compare-btn").addEventListener("click", () => {
@@ -42,19 +65,21 @@ document.getElementById("compare-btn").addEventListener("click", () => {
     const right = rightInput.value;
 
     if (!checkSize(left) || !checkSize(right)) {
-        diffOutput.value = "❌ Input too large (max 5 MB per side)";
         showToast("Input too large");
         return;
     }
 
-    diffOutput.value = simpleDiff(left, right);
+    const diff = diffLines(left, right);
+    renderDiff(diff);
+
     showToast("Compared");
 });
 
 document.getElementById("clear-btn").addEventListener("click", () => {
     leftInput.value = "";
     rightInput.value = "";
-    diffOutput.value = "";
+    leftDiff.innerHTML = "";
+    rightDiff.innerHTML = "";
 });
 
 document.getElementById("load-sample-btn").addEventListener("click", () => {
@@ -63,8 +88,22 @@ document.getElementById("load-sample-btn").addEventListener("click", () => {
 });
 
 document.getElementById("copy-btn").addEventListener("click", async () => {
+    const unified = [];
+
+    const diff = diffLines(leftInput.value, rightInput.value);
+
+    diff.forEach(row => {
+        if (row.type === "same") unified.push("  " + row.left);
+        if (row.type === "added") unified.push("+ " + row.right);
+        if (row.type === "removed") unified.push("- " + row.left);
+        if (row.type === "changed") {
+            unified.push("- " + row.left);
+            unified.push("+ " + row.right);
+        }
+    });
+
     try {
-        await navigator.clipboard.writeText(diffOutput.value);
+        await navigator.clipboard.writeText(unified.join("\n"));
         showToast("Copied");
     } catch {
         showToast("Copy failed");
@@ -72,7 +111,15 @@ document.getElementById("copy-btn").addEventListener("click", async () => {
 });
 
 document.getElementById("download-btn").addEventListener("click", () => {
-    const blob = new Blob([diffOutput.value], { type: "text/plain" });
+    const diff = diffLines(leftInput.value, rightInput.value);
+    const unified = diff.map(row => {
+        if (row.type === "same") return "  " + row.left;
+        if (row.type === "added") return "+ " + row.right;
+        if (row.type === "removed") return "- " + row.left;
+        return "- " + row.left + "\n+ " + row.right;
+    }).join("\n");
+
+    const blob = new Blob([unified], { type: "text/plain" });
     const url = URL.createObjectURL(blob);
 
     const a = document.createElement("a");
