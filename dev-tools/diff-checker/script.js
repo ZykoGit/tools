@@ -130,3 +130,15 @@ document.getElementById("download-btn").addEventListener("click", () => {
     URL.revokeObjectURL(url);
     showToast("Downloaded");
 });
+// --- Scroll Sync ---
+function syncScroll(e) {
+    if (e.target === leftDiff) {
+        rightDiff.scrollTop = leftDiff.scrollTop;
+    } else {
+        leftDiff.scrollTop = rightDiff.scrollTop;
+    }
+}
+
+leftDiff.addEventListener("scroll", syncScroll);
+rightDiff.addEventListener("scroll", syncScroll);
+
