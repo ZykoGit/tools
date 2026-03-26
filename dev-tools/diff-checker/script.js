@@ -131,14 +131,20 @@ document.getElementById("download-btn").addEventListener("click", () => {
     showToast("Downloaded");
 });
 // --- Scroll Sync ---
+let syncing = false;
+
 function syncScroll(e) {
+    if (syncing) return;
+    syncing = true;
+
     if (e.target === leftDiff) {
         rightDiff.scrollTop = leftDiff.scrollTop;
     } else {
         leftDiff.scrollTop = rightDiff.scrollTop;
     }
+
+    syncing = false;
 }
 
 leftDiff.addEventListener("scroll", syncScroll);
 rightDiff.addEventListener("scroll", syncScroll);
-
