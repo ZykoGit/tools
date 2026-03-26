@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
+    <title>UUID Generator — Toolbox</title>
+
+    <link rel="stylesheet" href="../../global.css" />
+    <link rel="icon" type="image/png" href="../../favicon.png" />
+    <link rel="apple-touch-icon" href="../../favicon.png" />
+</head>
+
+<body>
+    <header>
+        <h1><a href="../../" class="home-link">Toolbox</a></h1>
+        <p>UUID Generator</p>
+    </header>
+
+    <main class="tool-container">
+
+        <section class="tool-section">
+            <h2>Generate UUIDs</h2>
+
+            <label for="uuid-count">How many?</label>
+            <input type="number" id="uuid-count" min="1" max="200" value="1" />
+
+            <div class="button-row">
+                <button id="generate-btn">Generate</button>
+                <button id="clear-btn">Clear</button>
+            </div>
+        </section>
+
+        <section class="tool-section">
+            <h2>Output</h2>
+            <textarea id="uuid-output" readonly placeholder="Generated UUIDs will appear here..."></textarea>
+
+            <div class="button-row">
+                <button id="copy-btn">Copy Output</button>
+                <button id="download-btn">Download Output</button>
+            </div>
+        </section>
+
+        <section class="tool-section">
+            <h2>Sample UUID</h2>
+            <pre class="sample-box" id="sample-uuid">
+550e8400-e29b-41d4-a716-446655440000
+            </pre>
+        </section>
+
+    </main>
+
+    <footer>
+        <p>© 2026 Toolbox — Zykonix</p>
+    </footer>
+
+    <div id="toast"></div>
+
+    <script src="script.js"></script>
+</body>
+</html>
