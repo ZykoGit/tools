@@ -318,4 +318,23 @@ button:hover {
     border: 1px solid #333;
     border-radius: 6px;
 }
+/* Color Converter */
+#color-input {
+    margin-top: 0.5rem;
+    margin-bottom: 1rem;
+    padding: 0.5rem;
+    background: #1a1a1a;
+    color: #eee;
+    border: 1px solid #333;
+    border-radius: 6px;
+    width: 100%;
+}
+
+#preview-box {
+    width: 100%;
+    height: 80px;
+    border-radius: 8px;
+    border: 1px solid #333;
+    background: transparent;
+}
 
