@@ -1,0 +1,73 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
+    <title>Duplicate Line Remover — Toolbox</title>
+
+    <link rel="stylesheet" href="../../global.css" />
+    <link rel="icon" type="image/png" href="../../favicon.png" />
+    <link rel="apple-touch-icon" href="../../favicon.png" />
+</head>
+
+<body>
+<header>
+    <h1><a href="../../" class="home-link">Toolbox</a></h1>
+    <p>Duplicate Line Remover</p>
+</header>
+
+<main class="tool-container">
+
+    <section class="tool-section">
+        <h2>Input</h2>
+        <textarea id="input" placeholder="Paste text with duplicate lines..."></textarea>
+
+        <div class="button-row">
+            <button id="remove-btn">Remove Duplicates</button>
+            <button id="clear-btn">Clear</button>
+        </div>
+
+        <div class="button-row">
+            <label><input type="radio" name="mode" value="first" checked> Keep First</label>
+            <label><input type="radio" name="mode" value="last"> Keep Last</label>
+            <label><input type="checkbox" id="sort-lines"> Sort Output</label>
+        </div>
+    </section>
+
+    <section class="tool-section">
+        <h2>Output</h2>
+        <textarea id="output" readonly placeholder="Cleaned text will appear here..."></textarea>
+
+        <div class="button-row">
+            <button id="copy-btn">Copy Output</button>
+        </div>
+    </section>
+
+    <section class="tool-section">
+        <h2>Sample</h2>
+        <pre class="sample-box" id="sample-text">
+apple
+banana
+apple
+orange
+banana
+grape
+        </pre>
+
+        <div class="button-row sample-btn-row">
+            <button id="load-sample-btn">Load Sample</button>
+        </div>
+    </section>
+
+</main>
+
+<footer>
+    <p>© 2026 Toolbox — Zykonix</p>
+</footer>
+
+<div id="toast"></div>
+
+<script src="script.js"></script>
+</body>
+</html>
