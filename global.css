@@ -243,4 +243,5 @@ button:hover {
     font-size: 0.95rem;
     opacity: 0.75;
     border-left: 4px solid #4a90e2;
+    border-radius: 4px; 
 }
