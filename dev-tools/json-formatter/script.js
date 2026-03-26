@@ -1,13 +1,24 @@
 const input = document.getElementById("json-input");
 const output = document.getElementById("json-output");
+const toast = document.getElementById("toast");
 
-// 5 MB limit in bytes
+// 5 MB limit
 const MAX_SIZE = 5 * 1024 * 1024;
+
+function showToast(message) {
+    toast.innerText = message;
+    toast.classList.add("show");
+
+    setTimeout(() => {
+        toast.classList.remove("show");
+    }, 2000);
+}
 
 function checkSize() {
     const size = new Blob([input.value]).size;
     if (size > MAX_SIZE) {
         output.value = "❌ Input too large (max 5 MB)";
+        showToast("Input too large");
         return false;
     }
     return true;
@@ -40,16 +51,20 @@ document.getElementById("clear-btn").addEventListener("click", () => {
     output.value = "";
 });
 
+// Load sample
 document.getElementById("load-sample-btn").addEventListener("click", () => {
     const sample = document.getElementById("sample-json").innerText;
     input.value = sample.trim();
 });
 
 // Copy output
-document.getElementById("copy-btn").addEventListener("click", () => {
-    navigator.clipboard.writeText(output.value)
-        .then(() => alert("Copied to clipboard"))
-        .catch(() => alert("Failed to copy"));
+document.getElementById("copy-btn").addEventListener("click", async () => {
+    try {
+        await navigator.clipboard.writeText(output.value);
+        showToast("Copied");
+    } catch (err) {
+        showToast("Copy failed");
+    }
 });
 
 // Download output
@@ -63,4 +78,6 @@ document.getElementById("download-btn").addEventListener("click", () => {
     a.click();
 
     URL.revokeObjectURL(url);
+
+    showToast("Downloaded");
 });
