@@ -1,0 +1,78 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
+    <title>Diff Checker — Toolbox</title>
+
+    <link rel="stylesheet" href="../../global.css" />
+    <link rel="icon" type="image/png" href="../../favicon.png" />
+    <link rel="apple-touch-icon" href="../../favicon.png" />
+</head>
+
+<body>
+    <header>
+        <h1><a href="../../" class="home-link">Toolbox</a></h1>
+        <p>Diff Checker</p>
+    </header>
+
+    <main class="tool-container">
+
+        <section class="tool-section">
+            <h2>Left Input</h2>
+            <textarea id="left-input" placeholder="Original text..."></textarea>
+        </section>
+
+        <section class="tool-section">
+            <h2>Right Input</h2>
+            <textarea id="right-input" placeholder="Modified text..."></textarea>
+        </section>
+
+        <section class="tool-section">
+            <div class="button-row">
+                <button id="compare-btn">Compare</button>
+                <button id="clear-btn">Clear</button>
+            </div>
+        </section>
+
+        <section class="tool-section">
+            <h2>Diff Output</h2>
+            <textarea id="diff-output" readonly placeholder="Diff will appear here..."></textarea>
+
+            <div class="button-row">
+                <button id="copy-btn">Copy Output</button>
+                <button id="download-btn">Download Output</button>
+            </div>
+        </section>
+
+        <section class="tool-section">
+            <h2>Sample</h2>
+            <pre class="sample-box" id="sample-left">
+line one
+line two
+line three
+            </pre>
+            <pre class="sample-box" id="sample-right">
+line one
+line 2
+line three
+line four
+            </pre>
+
+            <div class="button-row sample-btn-row">
+                <button id="load-sample-btn">Load Sample</button>
+            </div>
+        </section>
+
+    </main>
+
+    <footer>
+        <p>© 2026 Toolbox — Zykonix</p>
+    </footer>
+
+    <div id="toast"></div>
+
+    <script src="script.js"></script>
+</body>
+</html>
