@@ -372,3 +372,7 @@ button:hover {
     cursor: pointer;
     font-size: 0.9rem;
 }
+/* Text Analyzer */
+#input, #output {
+    min-height: 150px;
+}
