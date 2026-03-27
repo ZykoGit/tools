@@ -24,8 +24,8 @@
         <textarea id="input" placeholder="Paste HTML here or upload a file..."></textarea>
 
         <div class="button-row">
-            <button id="generate-btn">Generate Blob Launcher</button>
-            <button id="run-btn">Open as Blob</button>
+            <button id="generate-btn">Generate data:text/html Blob Launcher</button>
+            <button id="open-btn">Open data URL</button>
             <button id="clear-btn">Clear</button>
         </div>
 
@@ -35,11 +35,11 @@
     </section>
 
     <section class="tool-section">
-        <h2>Generated Launcher Code</h2>
-        <textarea id="output" readonly placeholder="Generated JavaScript blob launcher will appear here..."></textarea>
+        <h2>Generated data:text/html URL</h2>
+        <textarea id="output" readonly placeholder="Your data URL will appear here..."></textarea>
 
         <div class="button-row">
-            <button id="copy-btn">Copy Code</button>
+            <button id="copy-btn">Copy URL</button>
         </div>
     </section>
 
@@ -47,13 +47,8 @@
         <h2>Sample HTML</h2>
 
         <pre class="sample-box" id="sample-text" readonly>
-&lt;!DOCTYPE html&gt;
-&lt;html&gt;
-&lt;body&gt;
 &lt;h1&gt;Hello from a Blob&lt;/h1&gt;
 &lt;p&gt;This HTML will open inside a blob URL.&lt;/p&gt;
-&lt;/body&gt;
-&lt;/html&gt;
         </pre>
 
         <div class="button-row sample-btn-row">
