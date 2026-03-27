@@ -11,25 +11,21 @@ function showToast(msg) {
     setTimeout(() => toast.classList.remove("show"), 2000);
 }
 
-// Escape backticks and ${} so template literal stays intact
 function escapeForTemplateLiteral(str) {
     return str
         .replace(/`/g, "\\`")
         .replace(/\$\{/g, "\\${");
 }
 
-function generateLauncher(html) {
+function generateDataUrl(html) {
     const escaped = escapeForTemplateLiteral(html);
 
-    return `
+    const launcher = `
 <!DOCTYPE html>
 <html>
 <body>
 <script>
-const html = \`
-${escaped}
-\`;
-
+const html = \`${escaped}\`;
 const blob = new Blob([html], { type: "text/html" });
 const url = URL.createObjectURL(blob);
 window.open(url);
@@ -37,9 +33,11 @@ window.open(url);
 </body>
 </html>
 `.trim();
+
+    return "data:text/html," + encodeURIComponent(launcher);
 }
 
-// Generate launcher code
+// Generate data URL
 document.getElementById("generate-btn").addEventListener("click", () => {
     const html = input.value;
 
@@ -49,23 +47,21 @@ document.getElementById("generate-btn").addEventListener("click", () => {
         return;
     }
 
-    output.value = generateLauncher(html);
+    output.value = generateDataUrl(html);
     showToast("Generated");
 });
 
-// Open as Blob directly
-document.getElementById("run-btn").addEventListener("click", () => {
-    const html = input.value;
+// Open data URL
+document.getElementById("open-btn").addEventListener("click", () => {
+    const url = output.value;
 
-    if (!html.trim()) {
-        showToast("No input");
+    if (!url.trim()) {
+        showToast("No URL generated");
         return;
     }
 
-    const blob = new Blob([html], { type: "text/html" });
-    const url = URL.createObjectURL(blob);
     window.open(url, "_blank");
-    showToast("Opened Blob");
+    showToast("Opened");
 });
 
 // Clear
