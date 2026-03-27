@@ -1,0 +1,4 @@
+User-agent: *
+Allow: /
+
+Sitemap: https://zykogit.github.io/tools/sitemap.xml
