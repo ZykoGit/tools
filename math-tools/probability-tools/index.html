@@ -1,0 +1,113 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
+    <title>Probability Tools — Toolbox</title>
+
+    <link rel="stylesheet" href="../../global.css" />
+    <link rel="icon" type="image/png" href="../../favicon.png" />
+    <link rel="apple-touch-icon" href="../../favicon.png" />
+</head>
+
+<body>
+<header>
+    <h1><a href="../../" class="home-link">Toolbox</a></h1>
+    <p>Probability Tools</p>
+</header>
+
+<main class="tool-container">
+
+    <!-- Basic Probability -->
+    <section class="tool-section">
+        <h2>Basic Probability</h2>
+
+        <div class="button-row">
+            <input type="number" id="pa" placeholder="P(A)">
+            <input type="number" id="pb" placeholder="P(B)">
+            <input type="number" id="pab" placeholder="P(A ∩ B)">
+        </div>
+
+        <div class="button-row">
+            <button id="basic-btn">Calculate</button>
+        </div>
+
+        <textarea id="basic-output" readonly placeholder="Results will appear here..."></textarea>
+    </section>
+
+    <!-- Combinatorics -->
+    <section class="tool-section">
+        <h2>Combinatorics</h2>
+
+        <div class="button-row">
+            <input type="number" id="n" placeholder="n">
+            <input type="number" id="r" placeholder="r">
+        </div>
+
+        <div class="button-row">
+            <button id="ncr-btn">nCr</button>
+            <button id="npr-btn">nPr</button>
+        </div>
+
+        <textarea id="comb-output" readonly placeholder="Result will appear here..."></textarea>
+    </section>
+
+    <!-- Binomial Probability -->
+    <section class="tool-section">
+        <h2>Binomial Probability</h2>
+
+        <div class="button-row">
+            <input type="number" id="bn" placeholder="n">
+            <input type="number" id="bk" placeholder="k">
+            <input type="number" id="bp" placeholder="p (0-1)">
+        </div>
+
+        <div class="button-row">
+            <button id="bin-eq-btn">P(X = k)</button>
+            <button id="bin-le-btn">P(X ≤ k)</button>
+            <button id="bin-ge-btn">P(X ≥ k)</button>
+        </div>
+
+        <textarea id="bin-output" readonly placeholder="Result will appear here..."></textarea>
+    </section>
+
+    <!-- Expected Value -->
+    <section class="tool-section">
+        <h2>Expected Value</h2>
+
+        <textarea id="ev-input" placeholder="Enter outcomes and probabilities like:
+5 0.2
+10 0.5
+20 0.3"></textarea>
+
+        <div class="button-row">
+            <button id="ev-btn">Calculate EV</button>
+        </div>
+
+        <textarea id="ev-output" readonly placeholder="Expected value will appear here..."></textarea>
+    </section>
+
+    <!-- Random Event Simulator -->
+    <section class="tool-section">
+        <h2>Random Event Simulator</h2>
+
+        <div class="button-row">
+            <button id="coin-btn">Flip Coin</button>
+            <button id="dice-btn">Roll Dice</button>
+        </div>
+
+        <textarea id="sim-output" readonly placeholder="Simulation result will appear here..."></textarea>
+    </section>
+
+</main>
+
+<footer>
+    <p>© 2026 Toolbox — Zykonix</p>
+</footer>
+
+<div id="toast"></div>
+
+<script src="script.js"></script>
+</body>
+</html>
