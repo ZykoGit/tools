@@ -1,0 +1,102 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
+    <title>Matrix Calculator — Toolbox</title>
+
+    <link rel="stylesheet" href="../../global.css" />
+    <link rel="icon" type="image/png" href="../../favicon.png" />
+    <link rel="apple-touch-icon" href="../../favicon.png" />
+</head>
+
+<body>
+<header>
+    <h1><a href="../../" class="home-link">Toolbox</a></h1>
+    <p>Matrix Calculator</p>
+</header>
+
+<main class="tool-container">
+
+    <section class="tool-section">
+        <h2>Matrix A</h2>
+        <textarea id="matrixA" placeholder="Enter matrix A (rows separated by newlines, values by spaces)..."></textarea>
+    </section>
+
+    <section class="tool-section">
+        <h2>Matrix B</h2>
+        <textarea id="matrixB" placeholder="Enter matrix B (optional depending on operation)..."></textarea>
+    </section>
+
+    <section class="tool-section">
+        <h2>Operation</h2>
+
+        <div class="button-row">
+            <button data-op="add">A + B</button>
+            <button data-op="sub">A - B</button>
+            <button data-op="mul">A × B</button>
+        </div>
+
+        <div class="button-row">
+            <button data-op="scalar">Scalar × A</button>
+            <input id="scalar" type="number" placeholder="Scalar value">
+        </div>
+
+        <div class="button-row">
+            <button data-op="detA">det(A)</button>
+            <button data-op="detB">det(B)</button>
+        </div>
+
+        <div class="button-row">
+            <button data-op="invA">A⁻¹</button>
+            <button data-op="invB">B⁻¹</button>
+        </div>
+
+        <div class="button-row">
+            <button data-op="transA">Aᵀ</button>
+            <button data-op="transB">Bᵀ</button>
+        </div>
+
+        <div class="button-row">
+            <button data-op="identity">Identity Matrix</button>
+            <input id="identitySize" type="number" placeholder="Size (n)">
+        </div>
+    </section>
+
+    <section class="tool-section">
+        <h2>Result</h2>
+        <textarea id="output" readonly placeholder="Result will appear here..."></textarea>
+
+        <div class="button-row">
+            <button id="copy-btn">Copy Result</button>
+            <button id="clear-btn">Clear</button>
+        </div>
+    </section>
+
+    <section class="tool-section">
+        <h2>Sample Matrix</h2>
+
+        <pre class="sample-box" id="sample-text" readonly>
+1 2 3
+4 5 6
+7 8 9
+        </pre>
+
+        <div class="button-row sample-btn-row">
+            <button id="load-sampleA-btn">Load into A</button>
+            <button id="load-sampleB-btn">Load into B</button>
+        </div>
+    </section>
+
+</main>
+
+<footer>
+    <p>© 2026 Toolbox — Zykonix</p>
+</footer>
+
+<div id="toast"></div>
+
+<script src="script.js"></script>
+</body>
+</html>
