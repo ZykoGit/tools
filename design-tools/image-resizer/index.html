@@ -1,0 +1,79 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
+    <title>Image Resizer — Toolbox</title>
+
+    <link rel="stylesheet" href="../../global.css" />
+    <link rel="icon" type="image/png" href="../../favicon.png" />
+    <link rel="apple-touch-icon" href="../../favicon.png" />
+</head>
+
+<body>
+<header>
+    <h1><a href="../../" class="home-link">Toolbox</a></h1>
+    <p>Image Resizer</p>
+</header>
+
+<main class="tool-container">
+
+    <section class="tool-section">
+        <h2>Upload Image</h2>
+
+        <input type="file" id="file-input" accept="image/*">
+
+        <div class="button-row">
+            <button id="clear-btn">Clear</button>
+        </div>
+
+        <img id="preview" style="max-width:100%; display:none; margin-top:10px; border-radius:6px;">
+    </section>
+
+    <section class="tool-section">
+        <h2>Resize Options</h2>
+
+        <div class="button-row">
+            <input type="number" id="width" placeholder="Width (px)">
+            <input type="number" id="height" placeholder="Height (px)">
+        </div>
+
+        <div class="button-row">
+            <input type="number" id="percent" placeholder="Scale (%)">
+        </div>
+
+        <div class="button-row">
+            <label><input type="checkbox" id="keep-aspect" checked> Keep aspect ratio</label>
+        </div>
+    </section>
+
+    <section class="tool-section">
+        <h2>Export Options</h2>
+
+        <div class="button-row">
+            <select id="format">
+                <option value="image/png">PNG</option>
+                <option value="image/jpeg">JPEG</option>
+                <option value="image/webp">WEBP</option>
+            </select>
+        </div>
+
+        <div class="button-row">
+            <button id="resize-btn">Resize & Export</button>
+        </div>
+
+        <a id="download-link" style="display:none;" download="resized-image">Download Resized Image</a>
+    </section>
+
+</main>
+
+<footer>
+    <p>© 2026 Toolbox — Zykonix</p>
+</footer>
+
+<div id="toast"></div>
+
+<script src="script.js"></script>
+</body>
+</html>
