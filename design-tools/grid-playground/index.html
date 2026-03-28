@@ -1,0 +1,83 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
+    <title>Grid Playground — Toolbox</title>
+
+    <link rel="stylesheet" href="../../global.css" />
+    <link rel="icon" type="image/png" href="../../favicon.png" />
+    <link rel="apple-touch-icon" href="../../favicon.png" />
+
+    <!-- PNG export -->
+    <script src="https://cdn.jsdelivr.net/npm/html2canvas@1.4.1/dist/html2canvas.min.js"></script>
+</head>
+
+<body>
+<header>
+    <h1><a href="../../" class="home-link">Toolbox</a></h1>
+    <p>Grid Playground</p>
+</header>
+
+<main class="tool-container">
+
+    <section class="tool-section">
+        <h2>Grid Controls</h2>
+
+        <label>Columns</label>
+        <input type="range" id="columns" min="1" max="12" value="4">
+
+        <label>Rows</label>
+        <input type="range" id="rows" min="1" max="12" value="3">
+
+        <label>Column Size (px)</label>
+        <input type="range" id="col-size" min="40" max="200" value="100">
+
+        <label>Row Size (px)</label>
+        <input type="range" id="row-size" min="40" max="200" value="80">
+
+        <label>Gap (px)</label>
+        <input type="range" id="gap" min="0" max="50" value="10">
+
+        <label>Number of Items</label>
+        <input type="range" id="item-count" min="1" max="50" value="12">
+    </section>
+
+    <section class="tool-section">
+        <h2>Item Controls</h2>
+
+        <label>Item Background Color</label>
+        <input type="color" id="item-color" value="#4a90e2">
+
+        <label>Item Border Radius (px)</label>
+        <input type="range" id="item-radius" min="0" max="30" value="6">
+
+        <label>Item Padding (px)</label>
+        <input type="range" id="item-padding" min="0" max="30" value="8">
+    </section>
+
+    <section class="tool-section">
+        <h2>Preview</h2>
+
+        <div id="grid-preview"></div>
+
+        <textarea id="css-output" readonly placeholder="CSS will appear here..."></textarea>
+
+        <div class="button-row">
+            <button id="copy-css-btn">Copy CSS</button>
+            <button id="download-png-btn">Download PNG</button>
+        </div>
+    </section>
+
+</main>
+
+<footer>
+    <p>© 2026 Toolbox — Zykonix</p>
+</footer>
+
+<div id="toast"></div>
+
+<script src="script.js"></script>
+</body>
+</html>
