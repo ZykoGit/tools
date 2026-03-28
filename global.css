@@ -407,3 +407,19 @@ button:hover {
     margin: 0;
 }
 
+/* SVG Optimizer */
+#file-input {
+    margin: 0.5rem 0 1rem 0;
+    padding: 0.6rem;
+    background: #1a1a1a;
+    color: #eee;
+    border: 1px solid #333;
+    border-radius: 6px;
+}
+
+.tool-section label {
+    display: block;
+    margin: 0.4rem 0;
+    font-size: 0.95rem;
+    opacity: 0.9;
+}
