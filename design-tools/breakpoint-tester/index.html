@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
+    <title>Breakpoint Tester — Toolbox</title>
+
+    <link rel="stylesheet" href="../../global.css" />
+    <link rel="icon" type="image/png" href="../../favicon.png" />
+    <link rel="apple-touch-icon" href="../../favicon.png" />
+</head>
+
+<body>
+<header>
+    <h1><a href="../../" class="home-link">Toolbox</a></h1>
+    <p>Responsive Breakpoint Tester</p>
+</header>
+
+<main class="tool-container">
+
+    <section class="tool-section">
+        <h2>Settings</h2>
+
+        <label>Website URL</label>
+        <input type="text" id="url-input" placeholder="https://example.com">
+
+        <label>Breakpoint Width (px)</label>
+        <input type="range" id="width-slider" min="200" max="2000" value="1200">
+
+        <div class="width-display">
+            Width: <span id="width-value">1200</span>px
+        </div>
+
+        <button id="load-btn">Load Website</button>
+    </section>
+
+    <section class="tool-section">
+        <h2>Preview</h2>
+
+        <div id="frame-wrapper">
+            <iframe id="preview-frame" sandbox="allow-same-origin allow-scripts allow-forms"></iframe>
+        </div>
+    </section>
+
+</main>
+
+<footer>
+    <p>© 2026 Toolbox — Zykonix</p>
+</footer>
+
+<div id="toast"></div>
+
+<script src="script.js"></script>
+</body>
+</html>
