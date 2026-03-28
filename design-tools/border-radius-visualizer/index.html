@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
+    <title>Border Radius Visualizer — Toolbox</title>
+
+    <link rel="stylesheet" href="../../global.css" />
+    <link rel="icon" type="image/png" href="../../favicon.png" />
+    <link rel="apple-touch-icon" href="../../favicon.png" />
+</head>
+
+<body>
+<header>
+    <h1><a href="../../" class="home-link">Toolbox</a></h1>
+    <p>Border Radius Visualizer</p>
+</header>
+
+<main class="tool-container">
+
+    <section class="tool-section">
+        <h2>Controls</h2>
+
+        <label>All Corners</label>
+        <input type="range" id="all-corners" min="0" max="200" value="20">
+
+        <label>Top‑Left</label>
+        <input type="range" id="tl" min="0" max="200" value="20">
+
+        <label>Top‑Right</label>
+        <input type="range" id="tr" min="0" max="200" value="20">
+
+        <label>Bottom‑Right</label>
+        <input type="range" id="br" min="0" max="200" value="20">
+
+        <label>Bottom‑Left</label>
+        <input type="range" id="bl" min="0" max="200" value="20">
+    </section>
+
+    <section class="tool-section">
+        <h2>Preview</h2>
+
+        <div id="radius-preview"></div>
+
+        <textarea id="css-output" readonly placeholder="CSS will appear here..."></textarea>
+
+        <div class="button-row">
+            <button id="copy-css-btn">Copy CSS</button>
+            <button id="download-png-btn">Download PNG</button>
+        </div>
+    </section>
+
+</main>
+
+<footer>
+    <p>© 2026 Toolbox — Zykonix</p>
+</footer>
+
+<div id="toast"></div>
+
+<script src="script.js"></script>
+</body>
+</html>
