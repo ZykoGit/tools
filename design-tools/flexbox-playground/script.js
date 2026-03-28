@@ -12,8 +12,12 @@ function updateFlex() {
     const direction = document.getElementById("flex-direction").value;
     const justify = document.getElementById("justify-content").value;
     const align = document.getElementById("align-items").value;
+    const alignContent = document.getElementById("align-content").value;
     const wrap = document.getElementById("flex-wrap").value;
+
     const gap = document.getElementById("gap").value;
+    const rowGap = document.getElementById("row-gap").value;
+    const columnGap = document.getElementById("column-gap").value;
 
     const itemCount = document.getElementById("item-count").value;
     const itemWidth = document.getElementById("item-width").value;
@@ -38,19 +42,27 @@ function updateFlex() {
         preview.appendChild(item);
     }
 
+    preview.style.display = "flex";
     preview.style.flexDirection = direction;
     preview.style.justifyContent = justify;
     preview.style.alignItems = align;
+    preview.style.alignContent = alignContent;
     preview.style.flexWrap = wrap;
+
     preview.style.gap = gap + "px";
+    preview.style.rowGap = rowGap + "px";
+    preview.style.columnGap = columnGap + "px";
 
     cssOutput.value =
 `display: flex;
 flex-direction: ${direction};
 justify-content: ${justify};
 align-items: ${align};
+align-content: ${alignContent};
 flex-wrap: ${wrap};
-gap: ${gap}px;`;
+gap: ${gap}px;
+row-gap: ${rowGap}px;
+column-gap: ${columnGap}px;`;
 }
 
 document.querySelectorAll("input, select").forEach(el => {
@@ -67,18 +79,7 @@ document.getElementById("copy-css-btn").addEventListener("click", async () => {
 });
 
 document.getElementById("download-png-btn").addEventListener("click", () => {
-    const canvas = document.createElement("canvas");
-    canvas.width = 1400;
-    canvas.height = 800;
-
-    const ctx = canvas.getContext("2d");
-
-    ctx.fillStyle = "#1a1a1a";
-    ctx.fillRect(0, 0, canvas.width, canvas.height);
-
-    html2canvas(preview).then(canvas2 => {
-        ctx.drawImage(canvas2, 100, 100);
-
+    html2canvas(preview).then(canvas => {
         const link = document.createElement("a");
         link.download = "flexbox-layout.png";
         link.href = canvas.toDataURL("image/png");
