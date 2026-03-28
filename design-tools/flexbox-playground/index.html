@@ -9,6 +9,9 @@
     <link rel="stylesheet" href="../../global.css" />
     <link rel="icon" type="image/png" href="../../favicon.png" />
     <link rel="apple-touch-icon" href="../../favicon.png" />
+
+    <!-- Needed for PNG export -->
+    <script src="https://cdn.jsdelivr.net/npm/html2canvas@1.4.1/dist/html2canvas.min.js"></script>
 </head>
 
 <body>
@@ -48,6 +51,16 @@
             <option value="flex-end">Flex End</option>
         </select>
 
+        <label>Align Content</label>
+        <select id="align-content">
+            <option value="stretch">Stretch</option>
+            <option value="flex-start">Flex Start</option>
+            <option value="center">Center</option>
+            <option value="flex-end">Flex End</option>
+            <option value="space-between">Space Between</option>
+            <option value="space-around">Space Around</option>
+        </select>
+
         <label>Flex Wrap</label>
         <select id="flex-wrap">
             <option value="nowrap">No Wrap</option>
@@ -58,8 +71,14 @@
         <label>Gap (px)</label>
         <input type="range" id="gap" min="0" max="50" value="10">
 
+        <label>Row Gap (px)</label>
+        <input type="range" id="row-gap" min="0" max="50" value="10">
+
+        <label>Column Gap (px)</label>
+        <input type="range" id="column-gap" min="0" max="50" value="10">
+
         <label>Number of Items</label>
-        <input type="range" id="item-count" min="1" max="12" value="6">
+        <input type="range" id="item-count" min="1" max="20" value="6">
     </section>
 
     <section class="tool-section">
@@ -101,7 +120,7 @@
 </footer>
 
 <div id="toast"></div>
-<script src="https://cdn.jsdelivr.net/npm/html2canvas@1.4.1/dist/html2canvas.min.js"></script>
+
 <script src="script.js"></script>
 </body>
 </html>
