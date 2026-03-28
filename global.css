@@ -423,3 +423,29 @@ button:hover {
     font-size: 0.95rem;
     opacity: 0.9;
 }
+/* Favicon Generator */
+.favicon-preview {
+    background: #1a1a1a;
+    border: 1px solid #333;
+    padding: 1rem;
+    border-radius: 8px;
+    margin-bottom: 1rem;
+    text-align: center;
+}
+
+.favicon-preview img {
+    display: block;
+    margin: 0.5rem auto;
+    border-radius: 4px;
+}
+
+.favicon-preview a {
+    display: inline-block;
+    margin-top: 0.5rem;
+    color: #4a90e2;
+    text-decoration: none;
+}
+
+.favicon-preview a:hover {
+    text-decoration: underline;
+}
