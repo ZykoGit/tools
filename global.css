@@ -449,3 +449,21 @@ button:hover {
 .favicon-preview a:hover {
     text-decoration: underline;
 }
+/* Fix Favicon Generator page width */
+.tool-section label {
+    display: block;
+    width: 100%;
+    margin: 0.4rem 0;
+    font-size: 1rem;
+}
+
+/* Make checkbox rows breathe */
+.tool-section input[type="checkbox"] {
+    margin-right: 0.5rem;
+}
+
+/* Ensure the page doesn't collapse visually */
+#results,
+.tool-section {
+    width: 100%;
+}
