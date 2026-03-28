@@ -550,3 +550,35 @@ button:hover {
 #download-png-btn:hover {
     background: #357ac9;
 }
+
+/* Border Radius Visualizer */
+#radius-preview {
+    width: 100%;
+    height: 200px;
+    border-radius: 20px;
+    background: #1a1a1a;
+    border: 1px solid #333;
+    margin-bottom: 1rem;
+}
+
+/* Sliders */
+.tool-section input[type="range"] {
+    width: 100%;
+    margin: 0.5rem 0 1rem 0;
+}
+
+/* PNG download button */
+#download-png-btn {
+    padding: 0.6rem 1.2rem;
+    background: #4a90e2;
+    border: none;
+    border-radius: 6px;
+    color: white;
+    cursor: pointer;
+    font-size: 1rem;
+}
+
+#download-png-btn:hover {
+    background: #357ac9;
+}
+
