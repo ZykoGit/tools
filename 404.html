@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <link rel="icon" href="favicon.png" type="image/png">
-    <title>404 - LOST IN THE STATIC</title>
+    <title>404 - YOU ARE LOST</title>
     <style>
         body, html {
             margin: 0; padding: 0; width: 100%; height: 100%;
@@ -13,13 +13,11 @@
             user-select: none; -webkit-user-select: none;
         }
         
-        /* Pixelated rendering */
         #game-canvas {
             width: 100%; height: 100%; display: block;
             image-rendering: pixelated;
         }
 
-        /* Overlays */
         #ui-layer {
             position: absolute; top: 0; left: 0; width: 100%; height: 100%;
             pointer-events: none;
@@ -38,7 +36,6 @@
             pointer-events: none; opacity: 0.4;
         }
 
-        /* Menus and Text */
         #start-screen {
             position: absolute; inset: 0; display: flex; flex-direction: column;
             align-items: center; justify-content: center; background: #000;
@@ -54,13 +51,15 @@
         #message-overlay {
             position: absolute; top: 30%; width: 100%; text-align: center;
             color: #fff; font-size: 1.5rem; text-shadow: 2px 2px 5px #000;
-            opacity: 0; transition: opacity 1s; z-index: 10;
+            opacity: 0; transition: opacity 0.5s; z-index: 10;
+        }
+        
+        #blood-overlay {
+            position: absolute; inset: 0; background: radial-gradient(circle, transparent 20%, #ff0000 100%);
+            opacity: 0; pointer-events: none; transition: opacity 0.5s; z-index: 8; mix-blend-mode: multiply;
         }
 
-        /* Mobile Controls */
-        #mobile-controls {
-            position: absolute; inset: 0; display: none; pointer-events: none; z-index: 5;
-        }
+        #mobile-controls { position: absolute; inset: 0; display: none; pointer-events: none; z-index: 5; }
         #zone-move { position: absolute; left: 0; top: 0; width: 50%; height: 100%; pointer-events: auto; }
         #zone-look { position: absolute; right: 0; top: 0; width: 50%; height: 100%; pointer-events: auto; }
         
@@ -75,7 +74,6 @@
             transform: translate(-50%, -50%); pointer-events: none;
         }
 
-        /* Jumpscare / Exit Glitch */
         #glitch-overlay {
             position: absolute; inset: 0; background: #fff; opacity: 0;
             pointer-events: none; z-index: 15; mix-blend-mode: difference;
@@ -90,7 +88,8 @@
     <div id="ui-layer">
         <div class="vignette"></div>
         <div class="scanlines"></div>
-        <div id="message-overlay">You shouldn't be here.</div>
+        <div id="blood-overlay"></div>
+        <div id="message-overlay"></div>
         <div id="glitch-overlay"></div>
     </div>
 
@@ -103,24 +102,21 @@
     <div id="start-screen">
         <h1>LOST IN THE STATIC</h1>
         <p>404: Place Not Found</p>
-        <p style="font-size: 0.8rem; color: #666;">Headphones recommended. Click to focus.</p>
+        <p style="font-size: 0.8rem; color: #666;">Headphones required. Click to focus.</p>
         <button id="start-btn">ENTER</button>
     </div>
 
 <script>
-/**
- * ENGINE SETTINGS & STATE
- */
+/** ENGINE SETTINGS & STATE **/
 const TILE_SIZE = 2;
 const WALL_HEIGHT = 3;
 const PLAYER_RADIUS = 0.4;
-const MOVE_SPEED = 3.0;
+const MOVE_SPEED = 3.5;
 const SENSITIVITY = 0.003;
 
 let isMobile = /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent);
 
-// Maze layout: 1 = Wall, 0 = Empty, 2 = Exit Door
-// Complex 15x15 maze. Start at (1,1). Exit at (13,13).
+// 1 = Wall, 0 = Empty, 2 = Exit Door
 const mazeMap = [
     [1,1,1,1,1,1,1,1,1,1,1,1,1,1,1],
     [1,0,0,0,1,0,0,0,0,0,1,0,0,0,1],
@@ -139,54 +135,107 @@ const mazeMap = [
     [1,1,1,1,1,1,1,1,1,1,1,1,1,1,1]
 ];
 
+// Specific tiles to trigger jumpscares
+const jumpScareTriggers = [
+    { x: 5, z: 1, fired: false },
+    { x: 1, z: 7, fired: false },
+    { x: 11, z: 7, fired: false },
+    { x: 7, z: 11, fired: false }
+];
+
+const EXIT_COORD = { x: 12, z: 13 }; // Grid coord of the exit door
+const MAX_DIST = Math.hypot(EXIT_COORD.x - 1, EXIT_COORD.z - 1) * TILE_SIZE;
+
 const state = {
-    isRunning: false, time: 0, 
-    phase: 0, jumpscaresTriggered: 0,
+    isRunning: false, isDead: false, chaseActive: false,
     keys: { w: false, a: false, s: false, d: false }
 };
 
-/**
- * THREE.JS SETUP
- */
+/** PROCEDURAL TEXTURES **/
+function createNoiseTexture(color1, color2) {
+    const canvas = document.createElement('canvas');
+    canvas.width = 128; canvas.height = 128;
+    const ctx = canvas.getContext('2d');
+    ctx.fillStyle = color1; ctx.fillRect(0, 0, 128, 128);
+    for(let i=0; i<4000; i++) {
+        ctx.fillStyle = Math.random() > 0.5 ? color2 : color1;
+        ctx.fillRect(Math.random()*128, Math.random()*128, 2, 2);
+    }
+    const tex = new THREE.CanvasTexture(canvas);
+    tex.wrapS = THREE.RepeatWrapping; tex.wrapT = THREE.RepeatWrapping;
+    tex.repeat.set(15, 15);
+    return tex;
+}
+
+function createScaryFace() {
+    const canvas = document.createElement('canvas');
+    canvas.width = 128; canvas.height = 128;
+    const ctx = canvas.getContext('2d');
+    ctx.fillStyle = 'black'; ctx.fillRect(0, 0, 128, 128);
+    // Creepy abstract face
+    ctx.fillStyle = 'white';
+    ctx.beginPath(); ctx.ellipse(40, 50, 10, 20, 0, 0, Math.PI*2); ctx.fill(); // Left eye
+    ctx.beginPath(); ctx.ellipse(88, 50, 10, 20, 0, 0, Math.PI*2); ctx.fill(); // Right eye
+    ctx.fillRect(40, 90, 48, 15); // Mouth
+    // Glitch lines
+    for(let i=0; i<100; i++) {
+        ctx.fillStyle = Math.random() > 0.5 ? 'rgba(255,255,255,0.5)' : 'rgba(255,0,0,0.5)';
+        ctx.fillRect(Math.random()*128, Math.random()*128, 20, 2);
+    }
+    const tex = new THREE.CanvasTexture(canvas);
+    tex.magFilter = THREE.NearestFilter;
+    return tex;
+}
+
+/** THREE.JS SETUP **/
 const canvas = document.getElementById('game-canvas');
-// Render at low resolution for pixel effect
 const renderer = new THREE.WebGLRenderer({ canvas, antialias: false });
 renderer.setSize(window.innerWidth / 3, window.innerHeight / 3, false);
 renderer.setClearColor(0x020202);
 
 const scene = new THREE.Scene();
-scene.fog = new THREE.Fog(0x020202, 1, 12);
+scene.fog = new THREE.Fog(0x020202, 1, 14);
 
 const camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 100);
-// Starting position based on maze map (1,1)
 camera.position.set(1 * TILE_SIZE, 1.2, 1 * TILE_SIZE);
 
-// Lighting
-const ambientLight = new THREE.AmbientLight(0x111115, 0.2);
+const ambientLight = new THREE.AmbientLight(0x111115, 0.4);
 scene.add(ambientLight);
 
-const flashLight = new THREE.SpotLight(0xfff5e6, 1.5, 15, Math.PI / 6, 0.5, 2);
+// Brighter, wider flashlight
+const flashLight = new THREE.SpotLight(0xfffae6, 3.0, 25, Math.PI / 3.5, 0.5, 2);
 flashLight.position.set(0, 0, 0);
 camera.add(flashLight);
 flashLight.target.position.set(0, 0, -1);
 camera.add(flashLight.target);
+
+// Jumpscare visual entity (attached to camera so it flashes in your face)
+const scaryMat = new THREE.SpriteMaterial({ map: createScaryFace(), color: 0xffffff });
+const scarySprite = new THREE.Sprite(scaryMat);
+scarySprite.scale.set(3, 3, 1);
+scarySprite.position.set(0, 0, -2);
+scarySprite.visible = false;
+camera.add(scarySprite);
 scene.add(camera);
 
-// Build Level
+// Build Level with Textures
+const floorTex = createNoiseTexture('#111', '#222');
+const ceilTex = createNoiseTexture('#0a0a0a', '#1a1a1a');
+
 const wallGeo = new THREE.BoxGeometry(TILE_SIZE, WALL_HEIGHT, TILE_SIZE);
-const wallMat = new THREE.MeshLambertMaterial({ color: 0x222222 });
+const wallMat = new THREE.MeshLambertMaterial({ color: 0x1a1a1a });
 const floorGeo = new THREE.PlaneGeometry(TILE_SIZE * 30, TILE_SIZE * 30);
-const floorMat = new THREE.MeshLambertMaterial({ color: 0x111111 });
+const floorMat = new THREE.MeshLambertMaterial({ map: floorTex });
+const ceilMat = new THREE.MeshLambertMaterial({ map: ceilTex });
+
 const floor = new THREE.Mesh(floorGeo, floorMat);
 floor.rotation.x = -Math.PI / 2;
 scene.add(floor);
 
-const ceil = new THREE.Mesh(floorGeo, floorMat);
+const ceil = new THREE.Mesh(floorGeo, ceilMat);
 ceil.rotation.x = Math.PI / 2;
 ceil.position.y = WALL_HEIGHT;
 scene.add(ceil);
-
-let exitMesh = null;
 
 for (let z = 0; z < mazeMap.length; z++) {
     for (let x = 0; x < mazeMap[z].length; x++) {
@@ -197,23 +246,19 @@ for (let z = 0; z < mazeMap.length; z++) {
         } else if (mazeMap[z][x] === 2) {
             const exitGeo = new THREE.BoxGeometry(TILE_SIZE, WALL_HEIGHT, TILE_SIZE);
             const exitMat = new THREE.MeshBasicMaterial({ color: 0xffffff });
-            exitMesh = new THREE.Mesh(exitGeo, exitMat);
+            const exitMesh = new THREE.Mesh(exitGeo, exitMat);
             exitMesh.position.set(x * TILE_SIZE, WALL_HEIGHT/2, z * TILE_SIZE);
             scene.add(exitMesh);
         }
     }
 }
 
-/**
- * PROCEDURAL AUDIO (Web Audio API)
- */
-let actx;
-let droneOsc, droneGain;
+/** AUDIO SYSTEM **/
+let actx, droneOsc, droneGain;
 
 function initAudio() {
     actx = new (window.AudioContext || window.webkitAudioContext)();
     
-    // Ambient Drone
     droneOsc = actx.createOscillator();
     droneOsc.type = 'sawtooth';
     droneOsc.frequency.value = 45;
@@ -231,7 +276,7 @@ function initAudio() {
     droneOsc.start();
 }
 
-function playFootstep() {
+function playFootstep(speedMult = 1.0) {
     if(!actx) return;
     const bufferSize = actx.sampleRate * 0.1; 
     const buffer = actx.createBuffer(1, bufferSize, actx.sampleRate);
@@ -240,25 +285,23 @@ function playFootstep() {
     
     const noise = actx.createBufferSource();
     noise.buffer = buffer;
+    noise.playbackRate.value = speedMult;
     
     const filter = actx.createBiquadFilter();
     filter.type = 'bandpass';
-    filter.frequency.value = 1000 + Math.random() * 500;
+    filter.frequency.value = 800 + Math.random() * 400;
     
     const gain = actx.createGain();
     gain.gain.setValueAtTime(0.5, actx.currentTime);
     gain.gain.exponentialRampToValueAtTime(0.01, actx.currentTime + 0.1);
     
-    noise.connect(filter);
-    filter.connect(gain);
-    gain.connect(actx.destination);
+    noise.connect(filter); filter.connect(gain); gain.connect(actx.destination);
     noise.start();
 }
 
 function playJumpscareSound() {
     if(!actx) return;
-    const osc1 = actx.createOscillator();
-    const osc2 = actx.createOscillator();
+    const osc1 = actx.createOscillator(); const osc2 = actx.createOscillator();
     osc1.type = 'square'; osc2.type = 'sawtooth';
     osc1.frequency.value = 800; osc2.frequency.value = 850;
     
@@ -266,21 +309,17 @@ function playJumpscareSound() {
     gain.gain.setValueAtTime(1.0, actx.currentTime);
     gain.gain.exponentialRampToValueAtTime(0.01, actx.currentTime + 0.5);
     
-    osc1.connect(gain); osc2.connect(gain);
-    gain.connect(actx.destination);
+    osc1.connect(gain); osc2.connect(gain); gain.connect(actx.destination);
     osc1.start(); osc2.start();
     osc1.stop(actx.currentTime + 0.5); osc2.stop(actx.currentTime + 0.5);
 }
 
-/**
- * CONTROLS & COLLISION
- */
+/** CONTROLS & COLLISION **/
 let euler = new THREE.Euler(0, 0, 0, 'YXZ');
 const PI_2 = Math.PI / 2;
 
-// Desktop Mouse
 document.addEventListener('mousemove', (e) => {
-    if (document.pointerLockElement === document.body && state.isRunning) {
+    if (document.pointerLockElement === document.body && state.isRunning && !state.isDead) {
         euler.setFromQuaternion(camera.quaternion);
         euler.y -= e.movementX * SENSITIVITY;
         euler.x -= e.movementY * SENSITIVITY;
@@ -289,21 +328,12 @@ document.addEventListener('mousemove', (e) => {
     }
 });
 
-// Desktop Keyboard
 document.addEventListener('keydown', e => { if(state.keys.hasOwnProperty(e.key.toLowerCase())) state.keys[e.key.toLowerCase()] = true; });
 document.addEventListener('keyup', e => { if(state.keys.hasOwnProperty(e.key.toLowerCase())) state.keys[e.key.toLowerCase()] = false; });
 
-// Mobile Multi-touch
-let moveTouchId = null;
-let lookTouchId = null;
-let joystickStart = { x: 0, y: 0 };
-let moveVector = { x: 0, y: 0 };
-let lastLook = { x: 0, y: 0 };
-
-const joyBase = document.getElementById('joystick-base');
-const joyKnob = document.getElementById('joystick-knob');
-const moveZone = document.getElementById('zone-move');
-const lookZone = document.getElementById('zone-look');
+let moveTouchId = null, lookTouchId = null;
+let joystickStart = { x: 0, y: 0 }, moveVector = { x: 0, y: 0 }, lastLook = { x: 0, y: 0 };
+const joyBase = document.getElementById('joystick-base'), joyKnob = document.getElementById('joystick-knob');
 
 if (isMobile) {
     document.getElementById('mobile-controls').style.display = 'block';
@@ -318,37 +348,27 @@ if (isMobile) {
                 joyBase.style.left = t.clientX + 'px'; joyBase.style.top = t.clientY + 'px';
                 joyKnob.style.left = '50%'; joyKnob.style.top = '50%';
             } else if (t.clientX >= window.innerWidth / 2 && lookTouchId === null) {
-                lookTouchId = t.identifier;
-                lastLook.x = t.clientX; lastLook.y = t.clientY;
+                lookTouchId = t.identifier; lastLook.x = t.clientX; lastLook.y = t.clientY;
             }
         }
     }, {passive: false});
 
     document.addEventListener('touchmove', e => {
-        e.preventDefault(); // prevent scrolling
+        e.preventDefault();
+        if(state.isDead) return;
         for(let i=0; i<e.changedTouches.length; i++) {
             let t = e.changedTouches[i];
             if (t.identifier === moveTouchId) {
-                let dx = t.clientX - joystickStart.x;
-                let dy = t.clientY - joystickStart.y;
-                let dist = Math.sqrt(dx*dx + dy*dy);
-                let maxR = 50; // joystick radius
-                
+                let dx = t.clientX - joystickStart.x, dy = t.clientY - joystickStart.y;
+                let dist = Math.sqrt(dx*dx + dy*dy), maxR = 50;
                 if (dist > maxR) { dx = (dx/dist)*maxR; dy = (dy/dist)*maxR; }
-                joyKnob.style.left = `calc(50% + ${dx}px)`;
-                joyKnob.style.top = `calc(50% + ${dy}px)`;
-                
-                // Normalize for movement
-                moveVector.x = dx / maxR;
-                moveVector.y = dy / maxR;
+                joyKnob.style.left = `calc(50% + ${dx}px)`; joyKnob.style.top = `calc(50% + ${dy}px)`;
+                moveVector.x = dx / maxR; moveVector.y = dy / maxR;
             } else if (t.identifier === lookTouchId) {
-                let dx = t.clientX - lastLook.x;
-                let dy = t.clientY - lastLook.y;
+                let dx = t.clientX - lastLook.x, dy = t.clientY - lastLook.y;
                 lastLook.x = t.clientX; lastLook.y = t.clientY;
-
                 euler.setFromQuaternion(camera.quaternion);
-                euler.y -= dx * SENSITIVITY * 2.0; // Slightly faster for mobile
-                euler.x -= dy * SENSITIVITY * 2.0;
+                euler.y -= dx * SENSITIVITY * 2.0; euler.x -= dy * SENSITIVITY * 2.0;
                 euler.x = Math.max(-PI_2, Math.min(PI_2, euler.x));
                 camera.quaternion.setFromEuler(euler);
             }
@@ -358,24 +378,16 @@ if (isMobile) {
     document.addEventListener('touchend', e => {
         for(let i=0; i<e.changedTouches.length; i++) {
             let t = e.changedTouches[i];
-            if (t.identifier === moveTouchId) {
-                moveTouchId = null;
-                moveVector.x = 0; moveVector.y = 0;
-                joyBase.style.display = 'none';
-            } else if (t.identifier === lookTouchId) {
-                lookTouchId = null;
-            }
+            if (t.identifier === moveTouchId) { moveTouchId = null; moveVector.x = 0; moveVector.y = 0; joyBase.style.display = 'none'; } 
+            else if (t.identifier === lookTouchId) { lookTouchId = null; }
         }
     });
 }
 
 function checkCollision(x, z) {
-    // Check bounding box corners against grid
     const corners = [
-        { cx: x - PLAYER_RADIUS, cz: z - PLAYER_RADIUS },
-        { cx: x + PLAYER_RADIUS, cz: z - PLAYER_RADIUS },
-        { cx: x - PLAYER_RADIUS, cz: z + PLAYER_RADIUS },
-        { cx: x + PLAYER_RADIUS, cz: z + PLAYER_RADIUS }
+        { cx: x - PLAYER_RADIUS, cz: z - PLAYER_RADIUS }, { cx: x + PLAYER_RADIUS, cz: z - PLAYER_RADIUS },
+        { cx: x - PLAYER_RADIUS, cz: z + PLAYER_RADIUS }, { cx: x + PLAYER_RADIUS, cz: z + PLAYER_RADIUS }
     ];
 
     for (let c of corners) {
@@ -389,30 +401,41 @@ function checkCollision(x, z) {
     return false;
 }
 
-/**
- * GAME LOOP & LOGIC
- */
-let clock = new THREE.Clock();
-let stepTimer = 0;
-let bobbingTime = 0;
+/** EVENTS & LOGIC **/
 const msgOverlay = document.getElementById('message-overlay');
 const glitchOverlay = document.getElementById('glitch-overlay');
+const bloodOverlay = document.getElementById('blood-overlay');
 
-function showMessage(txt, duration=3000) {
+function showMessage(txt, duration=3000, color="#fff") {
     msgOverlay.innerText = txt;
+    msgOverlay.style.color = color;
     msgOverlay.style.opacity = 1;
-    setTimeout(() => { msgOverlay.style.opacity = 0; }, duration);
+    if(duration > 0) setTimeout(() => { msgOverlay.style.opacity = 0; }, duration);
 }
 
 function triggerJumpscare() {
     playJumpscareSound();
     glitchOverlay.style.opacity = 1;
-    setTimeout(() => { glitchOverlay.style.opacity = 0; }, 150);
-    state.jumpscaresTriggered++;
+    scarySprite.visible = true; // Show the scary face
+    
+    setTimeout(() => { 
+        glitchOverlay.style.opacity = 0; 
+        scarySprite.visible = false; // Hide face
+    }, 200);
+}
+
+function triggerDeath() {
+    state.isDead = true;
+    triggerJumpscare();
+    showMessage("YOU LOOKED BACK.", 0, "#f00");
+    bloodOverlay.style.opacity = 1;
+    scene.fog.color.setHex(0xff0000);
+    droneOsc.frequency.setValueAtTime(150, actx.currentTime);
+    setTimeout(() => location.reload(), 2000); // Reload the page after dying
 }
 
 function handleExit() {
-    if (!state.isRunning) return;
+    if (!state.isRunning || state.isDead) return;
     state.isRunning = false;
     document.getElementById('start-screen').style.display = 'flex';
     document.getElementById('start-screen').style.opacity = 1;
@@ -431,32 +454,72 @@ document.getElementById('start-btn').addEventListener('click', () => {
         if (!isMobile) document.body.requestPointerLock();
         initAudio();
         state.isRunning = true;
-        clock.start();
         
-        // Pacing Phase 1
-        setTimeout(() => showMessage("You shouldn't be here."), 2000);
-        setTimeout(() => showMessage("Find your way back."), 6000);
+        setTimeout(() => showMessage("Find the exit."), 2000);
     }, 1000);
 });
+
+let clock = new THREE.Clock();
+let stepTimer = 0, chaseStepTimer = 0, bobbingTime = 0;
 
 function animate() {
     requestAnimationFrame(animate);
 
-    if (state.isRunning) {
+    if (state.isRunning && !state.isDead) {
         const dt = clock.getDelta();
-        state.time += dt;
 
         // Flashlight Flicker
-        flashLight.intensity = 1.5 + Math.random() * 0.1;
+        flashLight.intensity = 3.0 + Math.random() * 0.2;
         if (Math.random() > 0.98) flashLight.intensity = 0.5;
+
+        // Distance & Pacing Calculation
+        let currGridX = Math.floor((camera.position.x + TILE_SIZE/2) / TILE_SIZE);
+        let currGridZ = Math.floor((camera.position.z + TILE_SIZE/2) / TILE_SIZE);
+        let distToExit = Math.hypot(camera.position.x - (EXIT_COORD.x*TILE_SIZE), camera.position.z - (EXIT_COORD.z*TILE_SIZE));
+        let progress = Math.max(0, Math.min(1, 1.0 - (distToExit / MAX_DIST))); // 0 to 1
+
+        // Dynamically alter atmosphere based on progress
+        scene.fog.color.setRGB(0.01 + (progress * 0.2), 0.01, 0.01); // Slowly turns red
+        droneOsc.frequency.value = 45 + (progress * 40); // Drone gets higher
+
+        // Tile-based Jumpscares
+        for (let t of jumpScareTriggers) {
+            if (!t.fired && currGridX === t.x && currGridZ === t.z) {
+                t.fired = true;
+                triggerJumpscare();
+            }
+        }
+
+        // Chase Scene Logic (Trigger when within ~6 tiles of end)
+        if (distToExit < 6 * TILE_SIZE && !state.chaseActive) {
+            state.chaseActive = true;
+            showMessage("DON'T LOOK BACK", 3000, "#ff0000");
+            flashLight.color.setHex(0xffaaaa);
+        }
+
+        if (state.chaseActive) {
+            // Fake footsteps behind the player
+            chaseStepTimer -= dt;
+            if (chaseStepTimer <= 0) {
+                playFootstep(1.5); // fast footsteps
+                chaseStepTimer = 0.25;
+            }
+
+            // Check if looking away from exit
+            let lookVec = new THREE.Vector3();
+            camera.getWorldDirection(lookVec);
+            let toExitVec = new THREE.Vector3((EXIT_COORD.x*TILE_SIZE) - camera.position.x, 0, (EXIT_COORD.z*TILE_SIZE) - camera.position.z).normalize();
+            
+            // If the dot product is heavily negative, the camera is facing completely away from the exit door
+            if (lookVec.dot(toExitVec) < -0.4) {
+                triggerDeath();
+            }
+        }
 
         // Movement
         let velocity = new THREE.Vector3(0, 0, 0);
         let direction = new THREE.Vector3();
-        camera.getWorldDirection(direction);
-        direction.y = 0;
-        direction.normalize();
-
+        camera.getWorldDirection(direction); direction.y = 0; direction.normalize();
         const right = new THREE.Vector3().crossVectors(direction, new THREE.Vector3(0, 1, 0)).normalize();
 
         if (isMobile) {
@@ -472,53 +535,22 @@ function animate() {
         let isMoving = velocity.lengthSq() > 0;
 
         if (isMoving) {
-            // X Collision
-            if (!checkCollision(camera.position.x + velocity.x, camera.position.z)) {
-                camera.position.x += velocity.x;
-            }
-            // Z Collision
-            if (!checkCollision(camera.position.x, camera.position.z + velocity.z)) {
-                camera.position.z += velocity.z;
-            }
+            if (!checkCollision(camera.position.x + velocity.x, camera.position.z)) camera.position.x += velocity.x;
+            if (!checkCollision(camera.position.x, camera.position.z + velocity.z)) camera.position.z += velocity.z;
 
-            // Head Bobbing & Steps
             bobbingTime += dt * 8;
             camera.position.y = 1.2 + Math.sin(bobbingTime) * 0.05;
 
             stepTimer -= dt;
-            if (stepTimer <= 0) {
-                playFootstep();
-                stepTimer = 0.5; // step interval
-            }
+            if (stepTimer <= 0) { playFootstep(); stepTimer = 0.5; }
         } else {
-            // Reset bobbing gracefully
             camera.position.y += (1.2 - camera.position.y) * 0.1;
-        }
-
-        // Pacing System (Simple checks based on elapsed time)
-        if (state.time > 45 && state.phase === 0) {
-            state.phase = 1;
-            showMessage("You are not alone.");
-            droneGain.gain.exponentialRampToValueAtTime(0.5, actx.currentTime + 5);
-        }
-        
-        if (state.time > 90 && state.phase === 1) {
-            state.phase = 2;
-            triggerJumpscare();
-        }
-
-        if (state.time > 150 && state.phase === 2) {
-            state.phase = 3;
-            showMessage("Don't look back.", 2000);
-            scene.fog.color.setHex(0x1a0505); // Slight red hue to fog
-            flashLight.color.setHex(0xffaaaa);
         }
     }
 
     renderer.render(scene, camera);
 }
 
-// Handle resize to keep aspect ratio and pixelation intact
 window.addEventListener('resize', () => {
     camera.aspect = window.innerWidth / window.innerHeight;
     camera.updateProjectionMatrix();
@@ -526,7 +558,6 @@ window.addEventListener('resize', () => {
 });
 
 animate();
-
 </script>
 </body>
 </html>
