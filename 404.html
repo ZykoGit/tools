@@ -3,8 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <link rel="icon" href="favicon.png" type="image/png">
-    <title>404 - YOU ARE LOST</title>
+    <title>404 - LOST IN THE STATIC</title>
     <style>
         body, html {
             margin: 0; padding: 0; width: 100%; height: 100%;
@@ -25,15 +24,15 @@
         
         .vignette {
             position: absolute; top: 0; left: 0; width: 100%; height: 100%;
-            box-shadow: inset 0 0 150px rgba(0,0,0,0.95);
+            box-shadow: inset 0 0 180px rgba(0,0,0,1);
             pointer-events: none;
         }
 
         .scanlines {
             position: absolute; top: 0; left: 0; width: 100%; height: 100%;
-            background: linear-gradient(rgba(18, 16, 16, 0) 50%, rgba(0, 0, 0, 0.25) 50%), linear-gradient(90deg, rgba(255, 0, 0, 0.06), rgba(0, 255, 0, 0.02), rgba(0, 0, 255, 0.06));
-            background-size: 100% 4px, 6px 100%;
-            pointer-events: none; opacity: 0.4;
+            background: linear-gradient(rgba(18, 16, 16, 0) 50%, rgba(0, 0, 0, 0.15) 50%), linear-gradient(90deg, rgba(255, 0, 0, 0.03), rgba(0, 255, 0, 0.01), rgba(0, 0, 255, 0.03));
+            background-size: 100% 3px, 3px 100%;
+            pointer-events: none; opacity: 0.6;
         }
 
         #start-screen {
@@ -41,22 +40,22 @@
             align-items: center; justify-content: center; background: #000;
             color: #fff; pointer-events: auto; z-index: 20; transition: opacity 2s;
         }
-        #start-screen h1 { font-size: 2rem; letter-spacing: 5px; color: #aaa; text-shadow: 0 0 10px #fff; }
+        #start-screen h1 { font-size: 2rem; letter-spacing: 8px; color: #ddd; text-shadow: 0 0 15px #fff; }
         #start-btn {
-            margin-top: 20px; padding: 10px 20px; background: transparent; border: 1px solid #555;
-            color: #aaa; font-family: inherit; font-size: 1.2rem; cursor: pointer; transition: 0.3s;
+            margin-top: 20px; padding: 12px 24px; background: transparent; border: 1px solid #777;
+            color: #ccc; font-family: inherit; font-size: 1.2rem; cursor: pointer; transition: 0.3s;
         }
-        #start-btn:hover { background: #fff; color: #000; }
+        #start-btn:hover { background: #fff; color: #000; box-shadow: 0 0 20px #fff; }
 
         #message-overlay {
-            position: absolute; top: 30%; width: 100%; text-align: center;
-            color: #fff; font-size: 1.5rem; text-shadow: 2px 2px 5px #000;
-            opacity: 0; transition: opacity 0.5s; z-index: 10;
+            position: absolute; top: 25%; width: 100%; text-align: center;
+            color: #fff; font-size: 1.8rem; text-shadow: 0 0 10px #000;
+            opacity: 0; transition: opacity 0.5s; z-index: 10; font-weight: bold;
         }
         
         #blood-overlay {
-            position: absolute; inset: 0; background: radial-gradient(circle, transparent 20%, #ff0000 100%);
-            opacity: 0; pointer-events: none; transition: opacity 0.5s; z-index: 8; mix-blend-mode: multiply;
+            position: absolute; inset: 0; background: radial-gradient(circle, transparent 10%, #400 100%);
+            opacity: 0; pointer-events: none; transition: opacity 0.8s; z-index: 8;
         }
 
         #mobile-controls { position: absolute; inset: 0; display: none; pointer-events: none; z-index: 5; }
@@ -64,13 +63,13 @@
         #zone-look { position: absolute; right: 0; top: 0; width: 50%; height: 100%; pointer-events: auto; }
         
         #joystick-base {
-            position: absolute; width: 100px; height: 100px; border-radius: 50%;
-            border: 2px solid rgba(255,255,255,0.2); background: rgba(0,0,0,0.3);
+            position: absolute; width: 110px; height: 110px; border-radius: 50%;
+            border: 2px solid rgba(255,255,255,0.15); background: rgba(0,0,0,0.4);
             transform: translate(-50%, -50%); display: none; pointer-events: none;
         }
         #joystick-knob {
-            position: absolute; width: 40px; height: 40px; border-radius: 50%;
-            background: rgba(255,255,255,0.5); top: 50%; left: 50%;
+            position: absolute; width: 45px; height: 45px; border-radius: 50%;
+            background: rgba(255,255,255,0.4); top: 50%; left: 50%;
             transform: translate(-50%, -50%); pointer-events: none;
         }
 
@@ -101,462 +100,320 @@
 
     <div id="start-screen">
         <h1>LOST IN THE STATIC</h1>
-        <p>404: Place Not Found</p>
-        <p style="font-size: 0.8rem; color: #666;">Headphones required. Click to focus.</p>
-        <button id="start-btn">ENTER</button>
+        <p>404: The hallway goes on forever.</p>
+        <button id="start-btn">EXPLORE</button>
     </div>
 
 <script>
 /** ENGINE SETTINGS & STATE **/
-const TILE_SIZE = 2;
-const WALL_HEIGHT = 3;
-const PLAYER_RADIUS = 0.4;
-const MOVE_SPEED = 3.5;
-const SENSITIVITY = 0.003;
+const TILE_SIZE = 3;
+const WALL_HEIGHT = 3.5;
+const PLAYER_RADIUS = 0.5;
+const MOVE_SPEED = 4.0;
+const SENSITIVITY = 0.0025;
 
 let isMobile = /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent);
 
-// 1 = Wall, 0 = Empty, 2 = Exit Door
+// LARGER BUILDING MAP (0=Floor, 1=Wall, 2=Exit)
+// Designed with rooms, cubicles, and long "liminal" hallways
 const mazeMap = [
-    [1,1,1,1,1,1,1,1,1,1,1,1,1,1,1],
-    [1,0,0,0,1,0,0,0,0,0,1,0,0,0,1],
-    [1,0,1,0,1,0,1,1,1,0,1,1,1,0,1],
-    [1,0,1,0,0,0,1,0,0,0,0,0,1,0,1],
-    [1,0,1,1,1,1,1,0,1,1,1,0,1,0,1],
-    [1,0,0,0,0,0,0,0,1,0,0,0,1,0,1],
-    [1,1,1,1,1,0,1,1,1,0,1,1,1,0,1],
-    [1,0,0,0,1,0,1,0,0,0,1,0,0,0,1],
-    [1,0,1,0,1,0,1,0,1,1,1,0,1,1,1],
-    [1,0,1,0,0,0,1,0,1,0,0,0,1,0,1],
-    [1,0,1,1,1,1,1,0,1,0,1,1,1,0,1],
-    [1,0,0,0,0,0,0,0,1,0,1,0,0,0,1],
-    [1,1,1,1,1,1,1,0,1,0,1,0,1,1,1],
-    [1,0,0,0,0,0,0,0,1,0,0,0,2,1,1],
-    [1,1,1,1,1,1,1,1,1,1,1,1,1,1,1]
+    [1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1],
+    [1,0,0,0,0,0,1,0,0,0,0,0,0,0,0,0,0,0,0,1],
+    [1,0,1,1,1,0,1,0,1,1,1,1,1,1,1,1,1,1,0,1],
+    [1,0,1,0,1,0,1,0,0,0,0,0,0,0,0,0,0,1,0,1],
+    [1,0,1,0,0,0,1,1,1,1,1,0,1,1,1,1,0,1,0,1],
+    [1,0,1,1,1,0,0,0,0,0,1,0,1,0,0,1,0,1,0,1],
+    [1,0,0,0,1,1,1,1,1,0,1,0,1,0,0,1,0,1,0,1],
+    [1,1,1,0,0,0,0,0,1,0,1,0,1,1,0,1,0,0,0,1],
+    [1,0,0,0,1,1,1,0,1,0,0,0,0,1,0,1,1,1,0,1],
+    [1,0,1,0,1,0,0,0,1,1,1,1,0,1,0,0,0,1,0,1],
+    [1,0,1,0,1,0,1,0,0,0,0,1,0,1,1,1,0,1,0,1],
+    [1,0,1,0,1,0,1,1,1,1,0,1,0,0,0,1,0,1,0,1],
+    [1,0,0,0,0,0,0,0,0,1,0,1,1,1,0,1,0,0,0,1],
+    [1,1,1,1,1,1,1,1,0,1,0,0,0,1,0,1,1,1,1,1],
+    [1,0,0,0,0,0,0,1,0,1,1,1,0,1,0,0,0,0,0,1],
+    [1,0,1,1,1,1,0,1,0,0,0,1,0,1,1,1,1,1,0,1],
+    [1,0,1,0,0,0,0,1,1,1,0,1,0,0,0,0,0,1,0,1],
+    [1,0,1,0,1,1,0,0,0,0,0,1,1,1,1,1,0,1,0,1],
+    [1,0,0,0,1,0,0,1,1,1,0,0,0,0,0,0,0,0,2,1],
+    [1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1]
 ];
 
-// Specific tiles to trigger jumpscares
 const jumpScareTriggers = [
     { x: 5, z: 1, fired: false },
-    { x: 1, z: 7, fired: false },
-    { x: 11, z: 7, fired: false },
-    { x: 7, z: 11, fired: false }
+    { x: 1, z: 12, fired: false },
+    { x: 14, z: 1, fired: false },
+    { x: 8, z: 14, fired: false },
+    { x: 14, z: 18, fired: false }
 ];
 
-const EXIT_COORD = { x: 12, z: 13 }; // Grid coord of the exit door
-const MAX_DIST = Math.hypot(EXIT_COORD.x - 1, EXIT_COORD.z - 1) * TILE_SIZE;
-
-const state = {
-    isRunning: false, isDead: false, chaseActive: false,
-    keys: { w: false, a: false, s: false, d: false }
-};
+const EXIT_GRID = { x: 18, z: 18 };
+const state = { isRunning: false, isDead: false, chaseActive: false, keys: { w: false, a: false, s: false, d: false } };
 
 /** PROCEDURAL TEXTURES **/
-function createNoiseTexture(color1, color2) {
+function createTexture(c1, c2, isCeiling = false) {
     const canvas = document.createElement('canvas');
-    canvas.width = 128; canvas.height = 128;
+    canvas.width = 256; canvas.height = 256;
     const ctx = canvas.getContext('2d');
-    ctx.fillStyle = color1; ctx.fillRect(0, 0, 128, 128);
-    for(let i=0; i<4000; i++) {
-        ctx.fillStyle = Math.random() > 0.5 ? color2 : color1;
-        ctx.fillRect(Math.random()*128, Math.random()*128, 2, 2);
+    ctx.fillStyle = c1; ctx.fillRect(0, 0, 256, 256);
+    ctx.fillStyle = c2;
+    for(let i=0; i<8000; i++) ctx.fillRect(Math.random()*256, Math.random()*256, 1.5, 1.5);
+    if(isCeiling) { // Acoustic tile grid
+        ctx.strokeStyle = "rgba(0,0,0,0.3)";
+        ctx.strokeRect(0,0,128,128); ctx.strokeRect(128,0,128,128);
+        ctx.strokeRect(0,128,128,128); ctx.strokeRect(128,128,128,128);
     }
     const tex = new THREE.CanvasTexture(canvas);
-    tex.wrapS = THREE.RepeatWrapping; tex.wrapT = THREE.RepeatWrapping;
-    tex.repeat.set(15, 15);
+    tex.wrapS = tex.wrapT = THREE.RepeatWrapping;
+    tex.repeat.set(12, 12);
     return tex;
 }
 
 function createScaryFace() {
     const canvas = document.createElement('canvas');
-    canvas.width = 128; canvas.height = 128;
+    canvas.width = 256; canvas.height = 256;
     const ctx = canvas.getContext('2d');
-    ctx.fillStyle = 'black'; ctx.fillRect(0, 0, 128, 128);
-    // Creepy abstract face
+    ctx.fillStyle = 'black'; ctx.fillRect(0, 0, 256, 256);
     ctx.fillStyle = 'white';
-    ctx.beginPath(); ctx.ellipse(40, 50, 10, 20, 0, 0, Math.PI*2); ctx.fill(); // Left eye
-    ctx.beginPath(); ctx.ellipse(88, 50, 10, 20, 0, 0, Math.PI*2); ctx.fill(); // Right eye
-    ctx.fillRect(40, 90, 48, 15); // Mouth
-    // Glitch lines
-    for(let i=0; i<100; i++) {
-        ctx.fillStyle = Math.random() > 0.5 ? 'rgba(255,255,255,0.5)' : 'rgba(255,0,0,0.5)';
-        ctx.fillRect(Math.random()*128, Math.random()*128, 20, 2);
-    }
+    ctx.beginPath(); ctx.arc(80, 100, 15, 0, Math.PI*2); ctx.fill(); 
+    ctx.beginPath(); ctx.arc(176, 100, 15, 0, Math.PI*2); ctx.fill(); 
+    ctx.filter = 'blur(4px)';
+    ctx.fillRect(80, 180, 96, 10);
     const tex = new THREE.CanvasTexture(canvas);
-    tex.magFilter = THREE.NearestFilter;
     return tex;
 }
 
 /** THREE.JS SETUP **/
-const canvas = document.getElementById('game-canvas');
-const renderer = new THREE.WebGLRenderer({ canvas, antialias: false });
+const renderer = new THREE.WebGLRenderer({ canvas: document.getElementById('game-canvas'), antialias: false });
 renderer.setSize(window.innerWidth / 3, window.innerHeight / 3, false);
-renderer.setClearColor(0x020202);
+renderer.setClearColor(0x000000);
 
 const scene = new THREE.Scene();
-scene.fog = new THREE.Fog(0x020202, 1, 14);
+scene.fog = new THREE.Fog(0x000000, 1, 15);
 
 const camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 100);
-camera.position.set(1 * TILE_SIZE, 1.2, 1 * TILE_SIZE);
+camera.position.set(1.5 * TILE_SIZE, 1.3, 1.5 * TILE_SIZE);
 
-const ambientLight = new THREE.AmbientLight(0x111115, 0.4);
-scene.add(ambientLight);
-
-// Brighter, wider flashlight
-const flashLight = new THREE.SpotLight(0xfffae6, 3.0, 25, Math.PI / 3.5, 0.5, 2);
-flashLight.position.set(0, 0, 0);
+const flashLight = new THREE.SpotLight(0xfff5d4, 4.0, 30, Math.PI / 3, 0.4, 1.5);
 camera.add(flashLight);
 flashLight.target.position.set(0, 0, -1);
 camera.add(flashLight.target);
 
-// Jumpscare visual entity (attached to camera so it flashes in your face)
-const scaryMat = new THREE.SpriteMaterial({ map: createScaryFace(), color: 0xffffff });
-const scarySprite = new THREE.Sprite(scaryMat);
-scarySprite.scale.set(3, 3, 1);
-scarySprite.position.set(0, 0, -2);
-scarySprite.visible = false;
+const scarySprite = new THREE.Sprite(new THREE.SpriteMaterial({ map: createScaryFace(), transparent: true, opacity: 0.9 }));
+scarySprite.scale.set(4, 4, 1); scarySprite.position.set(0, 0, -1.5); scarySprite.visible = false;
 camera.add(scarySprite);
 scene.add(camera);
 
-// Build Level with Textures
-const floorTex = createNoiseTexture('#111', '#222');
-const ceilTex = createNoiseTexture('#0a0a0a', '#1a1a1a');
-
+// World Construction
+const floorTex = createTexture('#2b2620', '#1a1815'); // Dirty carpet
+const ceilTex = createTexture('#ddd', '#bbb', true); // Office tiles
+const wallMat = new THREE.MeshLambertMaterial({ color: 0x8c867a }); // Liminal beige
 const wallGeo = new THREE.BoxGeometry(TILE_SIZE, WALL_HEIGHT, TILE_SIZE);
-const wallMat = new THREE.MeshLambertMaterial({ color: 0x1a1a1a });
-const floorGeo = new THREE.PlaneGeometry(TILE_SIZE * 30, TILE_SIZE * 30);
-const floorMat = new THREE.MeshLambertMaterial({ map: floorTex });
-const ceilMat = new THREE.MeshLambertMaterial({ map: ceilTex });
 
-const floor = new THREE.Mesh(floorGeo, floorMat);
-floor.rotation.x = -Math.PI / 2;
-scene.add(floor);
-
-const ceil = new THREE.Mesh(floorGeo, ceilMat);
-ceil.rotation.x = Math.PI / 2;
-ceil.position.y = WALL_HEIGHT;
-scene.add(ceil);
+const walls = [];
+let exitMesh = null;
 
 for (let z = 0; z < mazeMap.length; z++) {
     for (let x = 0; x < mazeMap[z].length; x++) {
         if (mazeMap[z][x] === 1) {
             const wall = new THREE.Mesh(wallGeo, wallMat);
             wall.position.set(x * TILE_SIZE, WALL_HEIGHT/2, z * TILE_SIZE);
-            scene.add(wall);
+            scene.add(wall); walls.push(wall);
         } else if (mazeMap[z][x] === 2) {
-            const exitGeo = new THREE.BoxGeometry(TILE_SIZE, WALL_HEIGHT, TILE_SIZE);
-            const exitMat = new THREE.MeshBasicMaterial({ color: 0xffffff });
-            const exitMesh = new THREE.Mesh(exitGeo, exitMat);
+            exitMesh = new THREE.Mesh(wallGeo, new THREE.MeshBasicMaterial({ color: 0xffffff }));
             exitMesh.position.set(x * TILE_SIZE, WALL_HEIGHT/2, z * TILE_SIZE);
             scene.add(exitMesh);
         }
     }
 }
 
+const floor = new THREE.Mesh(new THREE.PlaneGeometry(200, 200), new THREE.MeshLambertMaterial({ map: floorTex }));
+floor.rotation.x = -Math.PI/2; scene.add(floor);
+const ceil = new THREE.Mesh(new THREE.PlaneGeometry(200, 200), new THREE.MeshLambertMaterial({ map: ceilTex }));
+ceil.rotation.x = Math.PI/2; ceil.position.y = WALL_HEIGHT; scene.add(ceil);
+
 /** AUDIO SYSTEM **/
-let actx, droneOsc, droneGain;
+let actx, drone, droneGain, raycaster = new THREE.Raycaster();
 
 function initAudio() {
     actx = new (window.AudioContext || window.webkitAudioContext)();
-    
-    droneOsc = actx.createOscillator();
-    droneOsc.type = 'sawtooth';
-    droneOsc.frequency.value = 45;
-    
-    const filter = actx.createBiquadFilter();
-    filter.type = 'lowpass';
-    filter.frequency.value = 200;
-
-    droneGain = actx.createGain();
-    droneGain.gain.value = 0.2;
-
-    droneOsc.connect(filter);
-    filter.connect(droneGain);
-    droneGain.connect(actx.destination);
-    droneOsc.start();
+    drone = actx.createOscillator(); drone.type = 'sine'; drone.frequency.value = 50;
+    droneGain = actx.createGain(); droneGain.gain.value = 0.3;
+    drone.connect(droneGain); droneGain.connect(actx.destination); drone.start();
 }
 
-function playFootstep(speedMult = 1.0) {
+function playSnd(freq, type, dur, vol) {
     if(!actx) return;
-    const bufferSize = actx.sampleRate * 0.1; 
-    const buffer = actx.createBuffer(1, bufferSize, actx.sampleRate);
-    const data = buffer.getChannelData(0);
-    for (let i = 0; i < bufferSize; i++) data[i] = Math.random() * 2 - 1;
-    
+    const osc = actx.createOscillator(); const g = actx.createGain();
+    osc.type = type; osc.frequency.value = freq;
+    g.gain.setValueAtTime(vol, actx.currentTime); g.gain.exponentialRampToValueAtTime(0.01, actx.currentTime + dur);
+    osc.connect(g); g.connect(actx.destination); osc.start(); osc.stop(actx.currentTime + dur);
+}
+
+function playFoot() { 
+    if(!actx) return;
     const noise = actx.createBufferSource();
-    noise.buffer = buffer;
-    noise.playbackRate.value = speedMult;
-    
-    const filter = actx.createBiquadFilter();
-    filter.type = 'bandpass';
-    filter.frequency.value = 800 + Math.random() * 400;
-    
-    const gain = actx.createGain();
-    gain.gain.setValueAtTime(0.5, actx.currentTime);
-    gain.gain.exponentialRampToValueAtTime(0.01, actx.currentTime + 0.1);
-    
-    noise.connect(filter); filter.connect(gain); gain.connect(actx.destination);
-    noise.start();
+    const buf = actx.createBuffer(1, actx.sampleRate * 0.1, actx.sampleRate);
+    const d = buf.getChannelData(0); for(let i=0; i<d.length; i++) d[i] = Math.random()*2-1;
+    noise.buffer = buf;
+    const f = actx.createBiquadFilter(); f.type = 'lowpass'; f.frequency.value = 400;
+    const g = actx.createGain(); g.gain.value = 0.15;
+    noise.connect(f); f.connect(g); g.connect(actx.destination); noise.start();
 }
 
-function playJumpscareSound() {
-    if(!actx) return;
-    const osc1 = actx.createOscillator(); const osc2 = actx.createOscillator();
-    osc1.type = 'square'; osc2.type = 'sawtooth';
-    osc1.frequency.value = 800; osc2.frequency.value = 850;
-    
-    const gain = actx.createGain();
-    gain.gain.setValueAtTime(1.0, actx.currentTime);
-    gain.gain.exponentialRampToValueAtTime(0.01, actx.currentTime + 0.5);
-    
-    osc1.connect(gain); osc2.connect(gain); gain.connect(actx.destination);
-    osc1.start(); osc2.start();
-    osc1.stop(actx.currentTime + 0.5); osc2.stop(actx.currentTime + 0.5);
-}
-
-/** CONTROLS & COLLISION **/
+/** CONTROLS **/
 let euler = new THREE.Euler(0, 0, 0, 'YXZ');
-const PI_2 = Math.PI / 2;
-
 document.addEventListener('mousemove', (e) => {
     if (document.pointerLockElement === document.body && state.isRunning && !state.isDead) {
         euler.setFromQuaternion(camera.quaternion);
-        euler.y -= e.movementX * SENSITIVITY;
-        euler.x -= e.movementY * SENSITIVITY;
-        euler.x = Math.max(-PI_2, Math.min(PI_2, euler.x));
+        euler.y -= e.movementX * SENSITIVITY; euler.x -= e.movementY * SENSITIVITY;
+        euler.x = Math.max(-1.5, Math.min(1.5, euler.x));
         camera.quaternion.setFromEuler(euler);
     }
 });
-
 document.addEventListener('keydown', e => { if(state.keys.hasOwnProperty(e.key.toLowerCase())) state.keys[e.key.toLowerCase()] = true; });
 document.addEventListener('keyup', e => { if(state.keys.hasOwnProperty(e.key.toLowerCase())) state.keys[e.key.toLowerCase()] = false; });
 
-let moveTouchId = null, lookTouchId = null;
-let joystickStart = { x: 0, y: 0 }, moveVector = { x: 0, y: 0 }, lastLook = { x: 0, y: 0 };
-const joyBase = document.getElementById('joystick-base'), joyKnob = document.getElementById('joystick-knob');
-
-if (isMobile) {
-    document.getElementById('mobile-controls').style.display = 'block';
-    
+// Mobile logic
+let moveTouchId = null, lookTouchId = null, joystickStart = {x:0,y:0}, moveVec = {x:0,y:0}, lastL = {x:0,y:0};
+const jB = document.getElementById('joystick-base'), jK = document.getElementById('joystick-knob');
+if(isMobile) {
+    document.getElementById('mobile-controls').style.display='block';
     document.addEventListener('touchstart', e => {
-        for(let i=0; i<e.changedTouches.length; i++) {
-            let t = e.changedTouches[i];
-            if (t.clientX < window.innerWidth / 2 && moveTouchId === null) {
-                moveTouchId = t.identifier;
-                joystickStart.x = t.clientX; joystickStart.y = t.clientY;
-                joyBase.style.display = 'block';
-                joyBase.style.left = t.clientX + 'px'; joyBase.style.top = t.clientY + 'px';
-                joyKnob.style.left = '50%'; joyKnob.style.top = '50%';
-            } else if (t.clientX >= window.innerWidth / 2 && lookTouchId === null) {
-                lookTouchId = t.identifier; lastLook.x = t.clientX; lastLook.y = t.clientY;
-            }
+        for(let t of e.changedTouches) {
+            if(t.clientX < window.innerWidth/2 && moveTouchId===null) {
+                moveTouchId=t.identifier; joystickStart={x:t.clientX,y:t.clientY};
+                jB.style.display='block'; jB.style.left=t.clientX+'px'; jB.style.top=t.clientY+'px';
+            } else if(lookTouchId===null) { lookTouchId=t.identifier; lastL={x:t.clientX,y:t.clientY}; }
         }
-    }, {passive: false});
-
+    });
     document.addEventListener('touchmove', e => {
-        e.preventDefault();
-        if(state.isDead) return;
-        for(let i=0; i<e.changedTouches.length; i++) {
-            let t = e.changedTouches[i];
-            if (t.identifier === moveTouchId) {
-                let dx = t.clientX - joystickStart.x, dy = t.clientY - joystickStart.y;
-                let dist = Math.sqrt(dx*dx + dy*dy), maxR = 50;
-                if (dist > maxR) { dx = (dx/dist)*maxR; dy = (dy/dist)*maxR; }
-                joyKnob.style.left = `calc(50% + ${dx}px)`; joyKnob.style.top = `calc(50% + ${dy}px)`;
-                moveVector.x = dx / maxR; moveVector.y = dy / maxR;
-            } else if (t.identifier === lookTouchId) {
-                let dx = t.clientX - lastLook.x, dy = t.clientY - lastLook.y;
-                lastLook.x = t.clientX; lastLook.y = t.clientY;
+        for(let t of e.changedTouches) {
+            if(t.identifier===moveTouchId) {
+                let dx=t.clientX-joystickStart.x, dy=t.clientY-joystickStart.y, d=Math.sqrt(dx*dx+dy*dy);
+                if(d>50) { dx*=50/d; dy*=50/d; }
+                jK.style.left=`calc(50% + ${dx}px)`; jK.style.top=`calc(50% + ${dy}px)`;
+                moveVec={x:dx/50, y:dy/50};
+            } else if(t.identifier===lookTouchId) {
                 euler.setFromQuaternion(camera.quaternion);
-                euler.y -= dx * SENSITIVITY * 2.0; euler.x -= dy * SENSITIVITY * 2.0;
-                euler.x = Math.max(-PI_2, Math.min(PI_2, euler.x));
-                camera.quaternion.setFromEuler(euler);
+                euler.y-=(t.clientX-lastL.x)*SENSITIVITY*2; euler.x-=(t.clientY-lastL.y)*SENSITIVITY*2;
+                euler.x=Math.max(-1.5,Math.min(1.5,euler.x)); camera.quaternion.setFromEuler(euler);
+                lastL={x:t.clientX,y:t.clientY};
             }
         }
-    }, {passive: false});
-
+    });
     document.addEventListener('touchend', e => {
-        for(let i=0; i<e.changedTouches.length; i++) {
-            let t = e.changedTouches[i];
-            if (t.identifier === moveTouchId) { moveTouchId = null; moveVector.x = 0; moveVector.y = 0; joyBase.style.display = 'none'; } 
-            else if (t.identifier === lookTouchId) { lookTouchId = null; }
+        for(let t of e.changedTouches) {
+            if(t.identifier===moveTouchId) { moveTouchId=null; moveVec={x:0,y:0}; jB.style.display='none'; }
+            else if(t.identifier===lookTouchId) lookTouchId=null;
         }
     });
 }
 
-function checkCollision(x, z) {
-    const corners = [
-        { cx: x - PLAYER_RADIUS, cz: z - PLAYER_RADIUS }, { cx: x + PLAYER_RADIUS, cz: z - PLAYER_RADIUS },
-        { cx: x - PLAYER_RADIUS, cz: z + PLAYER_RADIUS }, { cx: x + PLAYER_RADIUS, cz: z + PLAYER_RADIUS }
-    ];
+/** GAME LOGIC **/
+function triggerScare() {
+    playSnd(100, 'sawtooth', 0.4, 0.5);
+    document.getElementById('glitch-overlay').style.opacity = 1;
+    scarySprite.visible = true;
+    setTimeout(() => { document.getElementById('glitch-overlay').style.opacity = 0; scarySprite.visible = false; }, 150);
+}
 
-    for (let c of corners) {
-        let gridX = Math.floor((c.cx + TILE_SIZE/2) / TILE_SIZE);
-        let gridZ = Math.floor((c.cz + TILE_SIZE/2) / TILE_SIZE);
-        
-        if (gridZ < 0 || gridZ >= mazeMap.length || gridX < 0 || gridX >= mazeMap[0].length) return true;
-        if (mazeMap[gridZ][gridX] === 1) return true;
-        if (mazeMap[gridZ][gridX] === 2) handleExit();
-    }
+function die() {
+    state.isDead = true; triggerScare();
+    document.getElementById('message-overlay').innerText = "YOU LOOKED BACK.";
+    document.getElementById('message-overlay').style.opacity = 1;
+    document.getElementById('blood-overlay').style.opacity = 1;
+    setTimeout(() => location.reload(), 2500);
+}
+
+function handleCollision(x, z) {
+    const check = (px, pz) => {
+        let gx = Math.floor((px + TILE_SIZE/2) / TILE_SIZE);
+        let gz = Math.floor((pz + TILE_SIZE/2) / TILE_SIZE);
+        if(mazeMap[gz] && mazeMap[gz][gx] === 2) {
+            state.isRunning = false;
+            document.getElementById('start-screen').style.display='flex';
+            document.getElementById('start-screen').style.opacity=1;
+            document.getElementById('start-screen').innerHTML="<h1>YOU ESCAPED</h1><p>404: Found.</p><button onclick='location.reload()'>RETURN</button>";
+        }
+        return mazeMap[gz] && mazeMap[gz][gx] === 1;
+    };
+    if(check(x+PLAYER_RADIUS, z) || check(x-PLAYER_RADIUS, z) || check(x, z+PLAYER_RADIUS) || check(x, z-PLAYER_RADIUS)) return true;
     return false;
 }
 
-/** EVENTS & LOGIC **/
-const msgOverlay = document.getElementById('message-overlay');
-const glitchOverlay = document.getElementById('glitch-overlay');
-const bloodOverlay = document.getElementById('blood-overlay');
-
-function showMessage(txt, duration=3000, color="#fff") {
-    msgOverlay.innerText = txt;
-    msgOverlay.style.color = color;
-    msgOverlay.style.opacity = 1;
-    if(duration > 0) setTimeout(() => { msgOverlay.style.opacity = 0; }, duration);
-}
-
-function triggerJumpscare() {
-    playJumpscareSound();
-    glitchOverlay.style.opacity = 1;
-    scarySprite.visible = true; // Show the scary face
-    
-    setTimeout(() => { 
-        glitchOverlay.style.opacity = 0; 
-        scarySprite.visible = false; // Hide face
-    }, 200);
-}
-
-function triggerDeath() {
-    state.isDead = true;
-    triggerJumpscare();
-    showMessage("YOU LOOKED BACK.", 0, "#f00");
-    bloodOverlay.style.opacity = 1;
-    scene.fog.color.setHex(0xff0000);
-    droneOsc.frequency.setValueAtTime(150, actx.currentTime);
-    setTimeout(() => location.reload(), 2000); // Reload the page after dying
-}
-
-function handleExit() {
-    if (!state.isRunning || state.isDead) return;
-    state.isRunning = false;
-    document.getElementById('start-screen').style.display = 'flex';
-    document.getElementById('start-screen').style.opacity = 1;
-    document.getElementById('start-screen').innerHTML = `
-        <h1>404: Page Not Found</h1>
-        <p>You found your way back.</p>
-        <button id="restart-btn" style="margin-top:20px; padding:10px; background:transparent; color:#fff; border:1px solid #fff;">RETURN HOME</button>
-    `;
-    document.getElementById('restart-btn').onclick = () => location.reload();
-}
-
-document.getElementById('start-btn').addEventListener('click', () => {
+document.getElementById('start-btn').onclick = () => {
     document.getElementById('start-screen').style.opacity = 0;
     setTimeout(() => {
         document.getElementById('start-screen').style.display = 'none';
-        if (!isMobile) document.body.requestPointerLock();
-        initAudio();
-        state.isRunning = true;
-        
-        setTimeout(() => showMessage("Find the exit."), 2000);
+        if(!isMobile) document.body.requestPointerLock();
+        initAudio(); state.isRunning = true;
     }, 1000);
-});
+};
 
-let clock = new THREE.Clock();
-let stepTimer = 0, chaseStepTimer = 0, bobbingTime = 0;
+let clock = new THREE.Clock(), stepT = 0, bob = 0;
 
 function animate() {
     requestAnimationFrame(animate);
-
     if (state.isRunning && !state.isDead) {
         const dt = clock.getDelta();
+        flashLight.intensity = 4.0 + Math.random() * 0.5;
 
-        // Flashlight Flicker
-        flashLight.intensity = 3.0 + Math.random() * 0.2;
-        if (Math.random() > 0.98) flashLight.intensity = 0.5;
+        // Visual Distance Logic
+        let dist = camera.position.distanceTo(exitMesh.position);
+        drone.frequency.value = 50 + (1 - Math.min(dist/50, 1)) * 100;
 
-        // Distance & Pacing Calculation
-        let currGridX = Math.floor((camera.position.x + TILE_SIZE/2) / TILE_SIZE);
-        let currGridZ = Math.floor((camera.position.z + TILE_SIZE/2) / TILE_SIZE);
-        let distToExit = Math.hypot(camera.position.x - (EXIT_COORD.x*TILE_SIZE), camera.position.z - (EXIT_COORD.z*TILE_SIZE));
-        let progress = Math.max(0, Math.min(1, 1.0 - (distToExit / MAX_DIST))); // 0 to 1
-
-        // Dynamically alter atmosphere based on progress
-        scene.fog.color.setRGB(0.01 + (progress * 0.2), 0.01, 0.01); // Slowly turns red
-        droneOsc.frequency.value = 45 + (progress * 40); // Drone gets higher
-
-        // Tile-based Jumpscares
-        for (let t of jumpScareTriggers) {
-            if (!t.fired && currGridX === t.x && currGridZ === t.z) {
-                t.fired = true;
-                triggerJumpscare();
+        // Visibility Chase Trigger
+        if (!state.chaseActive && dist < 15) {
+            let dir = new THREE.Vector3().subVectors(exitMesh.position, camera.position).normalize();
+            raycaster.set(camera.position, dir);
+            const inter = raycaster.intersectObjects(walls);
+            if (inter.length === 0 || inter[0].distance > dist) {
+                state.chaseActive = true;
+                document.getElementById('message-overlay').innerText = "DON'T LOOK BACK";
+                document.getElementById('message-overlay').style.opacity = 1;
+                setTimeout(()=> document.getElementById('message-overlay').style.opacity = 0, 3000);
             }
-        }
-
-        // Chase Scene Logic (Trigger when within ~6 tiles of end)
-        if (distToExit < 6 * TILE_SIZE && !state.chaseActive) {
-            state.chaseActive = true;
-            showMessage("DON'T LOOK BACK", 3000, "#ff0000");
-            flashLight.color.setHex(0xffaaaa);
         }
 
         if (state.chaseActive) {
-            // Fake footsteps behind the player
-            chaseStepTimer -= dt;
-            if (chaseStepTimer <= 0) {
-                playFootstep(1.5); // fast footsteps
-                chaseStepTimer = 0.25;
-            }
-
-            // Check if looking away from exit
-            let lookVec = new THREE.Vector3();
-            camera.getWorldDirection(lookVec);
-            let toExitVec = new THREE.Vector3((EXIT_COORD.x*TILE_SIZE) - camera.position.x, 0, (EXIT_COORD.z*TILE_SIZE) - camera.position.z).normalize();
-            
-            // If the dot product is heavily negative, the camera is facing completely away from the exit door
-            if (lookVec.dot(toExitVec) < -0.4) {
-                triggerDeath();
-            }
+            let look = new THREE.Vector3(); camera.getWorldDirection(look);
+            let toExit = new THREE.Vector3().subVectors(exitMesh.position, camera.position).normalize();
+            if (look.dot(toExit) < -0.6) die(); // Looking away from exit
         }
+
+        // Jumpscare triggers
+        let gx = Math.floor((camera.position.x + TILE_SIZE/2)/TILE_SIZE);
+        let gz = Math.floor((camera.position.z + TILE_SIZE/2)/TILE_SIZE);
+        for(let t of jumpScareTriggers) if(!t.fired && t.x===gx && t.z===gz) { t.fired=true; triggerScare(); }
 
         // Movement
-        let velocity = new THREE.Vector3(0, 0, 0);
-        let direction = new THREE.Vector3();
-        camera.getWorldDirection(direction); direction.y = 0; direction.normalize();
-        const right = new THREE.Vector3().crossVectors(direction, new THREE.Vector3(0, 1, 0)).normalize();
+        let v = new THREE.Vector3();
+        let fwd = new THREE.Vector3(); camera.getWorldDirection(fwd); fwd.y = 0; fwd.normalize();
+        let r = new THREE.Vector3().crossVectors(fwd, new THREE.Vector3(0,1,0)).normalize();
 
-        if (isMobile) {
-            velocity.addScaledVector(right, moveVector.x * MOVE_SPEED * dt);
-            velocity.addScaledVector(direction, -moveVector.y * MOVE_SPEED * dt);
-        } else {
-            if (state.keys.w) velocity.addScaledVector(direction, MOVE_SPEED * dt);
-            if (state.keys.s) velocity.addScaledVector(direction, -MOVE_SPEED * dt);
-            if (state.keys.a) velocity.addScaledVector(right, -MOVE_SPEED * dt);
-            if (state.keys.d) velocity.addScaledVector(right, MOVE_SPEED * dt);
+        if(isMobile) { v.addScaledVector(r, moveVec.x * MOVE_SPEED * dt); v.addScaledVector(fwd, -moveVec.y * MOVE_SPEED * dt); }
+        else {
+            if(state.keys.w) v.addScaledVector(fwd, MOVE_SPEED * dt);
+            if(state.keys.s) v.addScaledVector(fwd, -MOVE_SPEED * dt);
+            if(state.keys.a) v.addScaledVector(r, -MOVE_SPEED * dt);
+            if(state.keys.d) v.addScaledVector(r, MOVE_SPEED * dt);
         }
 
-        let isMoving = velocity.lengthSq() > 0;
-
-        if (isMoving) {
-            if (!checkCollision(camera.position.x + velocity.x, camera.position.z)) camera.position.x += velocity.x;
-            if (!checkCollision(camera.position.x, camera.position.z + velocity.z)) camera.position.z += velocity.z;
-
-            bobbingTime += dt * 8;
-            camera.position.y = 1.2 + Math.sin(bobbingTime) * 0.05;
-
-            stepTimer -= dt;
-            if (stepTimer <= 0) { playFootstep(); stepTimer = 0.5; }
-        } else {
-            camera.position.y += (1.2 - camera.position.y) * 0.1;
+        if (v.lengthSq() > 0) {
+            if(!handleCollision(camera.position.x + v.x, camera.position.z)) camera.position.x += v.x;
+            if(!handleCollision(camera.position.x, camera.position.z + v.z)) camera.position.z += v.z;
+            bob += dt * 10; camera.position.y = 1.3 + Math.sin(bob) * 0.05;
+            stepT -= dt; if(stepT<=0) { playFoot(); stepT = state.chaseActive ? 0.3 : 0.5; }
         }
     }
-
     renderer.render(scene, camera);
 }
 
-window.addEventListener('resize', () => {
-    camera.aspect = window.innerWidth / window.innerHeight;
-    camera.updateProjectionMatrix();
+window.onresize = () => {
+    camera.aspect = window.innerWidth / window.innerHeight; camera.updateProjectionMatrix();
     renderer.setSize(window.innerWidth / 3, window.innerHeight / 3, false);
-});
-
+};
 animate();
 </script>
 </body>
