@@ -3,8 +3,8 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <link rel="icon" href="favicon.png?67=67">
-    <title>404 - YOU ARE LOST</title>
+    <title>404 - LOST IN THE STATIC</title>
+    <link rel="icon" type="image/png" href="favicon.png">
     <style>
         body, html {
             margin: 0; padding: 0; width: 100%; height: 100%;
@@ -33,26 +33,26 @@
         
         #vignette {
             position: absolute; top: 0; left: 0; width: 100%; height: 100%;
-            background: radial-gradient(circle, transparent 20%, rgba(0,0,0,0.9) 90%);
+            background: radial-gradient(circle, transparent 20%, rgba(0,0,0,0.9) 95%);
             pointer-events: none; z-index: 5;
         }
 
-        /* Mobile Joystick */
+        /* Mobile Controls */
         #joy-container {
-            position: absolute; bottom: 30px; left: 30px;
+            position: absolute; bottom: 40px; left: 40px;
             width: 120px; height: 120px; background: rgba(255,255,255,0.05);
             border: 1px solid rgba(255,255,255,0.2); border-radius: 50%;
             display: none; touch-action: none; z-index: 50;
         }
         #joy-knob {
             position: absolute; top: 35px; left: 35px;
-            width: 50px; height: 50px; background: rgba(255,255,255,0.2);
+            width: 50px; height: 50px; background: rgba(255,255,255,0.3);
             border-radius: 50%; pointer-events: none;
         }
 
-        /* Look Area for Mobile */
+        /* Full Screen Look Area for Mobile */
         #look-area {
-            position: absolute; top: 0; right: 0; width: 50%; height: 100%;
+            position: absolute; top: 0; right: 0; width: 100%; height: 100%;
             display: none; z-index: 40; touch-action: none;
         }
 
@@ -94,7 +94,7 @@
     </div>
 
     <div id="end-screen">
-        <h1 id="end-text-1">You found your way back.</h1>
+        <h1>You found your way back.</h1>
         <h2>404: Page Not Found</h2>
         <a href="/" class="btn">Return Home</a>
     </div>
@@ -102,7 +102,9 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/0.160.0/three.min.js"></script>
 
     <script>
-        /** CONFIG **/
+        /** * MAZE DATA 
+         * 1: Wall, 0: Empty, 2: Spawn, 3: Exit
+         */
         const MAP = [
             [1,1,1,1,1,1,1,1,1,1,1,1,1,1,1],
             [1,2,0,0,0,1,0,0,0,0,0,0,0,0,1],
@@ -130,37 +132,45 @@
 
         function init() {
             scene = new THREE.Scene();
-            scene.fog = new THREE.FogExp2(0x000000, 0.12);
+            scene.fog = new THREE.FogExp2(0x000000, 0.15);
             camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 1000);
             
-            renderer = new THREE.WebGLRenderer();
+            renderer = new THREE.WebGLRenderer({ antialias: false });
             renderer.setPixelRatio(window.devicePixelRatio * RENDER_SCALE);
             renderer.setSize(window.innerWidth, window.innerHeight);
             document.getElementById('game-container').appendChild(renderer.domElement);
 
-            const wallTex = createTex('#111', '#222');
+            const wallTex = createTex('#151515', '#2a2a2a');
             const floorTex = createTex('#050505', '#111');
 
+            // Generate Map Geometry
             for(let z=0; z<MAP.length; z++) {
                 for(let x=0; x<MAP[z].length; x++) {
                     const pos = new THREE.Vector3(x*UNIT, 0, z*UNIT);
                     if(MAP[z][x] === 1) {
-                        const wall = new THREE.Mesh(new THREE.BoxGeometry(UNIT, UNIT*2, UNIT), new THREE.MeshStandardMaterial({map: wallTex}));
+                        const wall = new THREE.Mesh(
+                            new THREE.BoxGeometry(UNIT, UNIT*2, UNIT), 
+                            new THREE.MeshStandardMaterial({map: wallTex, roughness: 0.8})
+                        );
                         wall.position.set(pos.x, UNIT, pos.z);
                         scene.add(wall);
                         walls.push(wall);
                     } else {
-                        const floor = new THREE.Mesh(new THREE.PlaneGeometry(UNIT, UNIT), new THREE.MeshStandardMaterial({map: floorTex}));
+                        const floor = new THREE.Mesh(
+                            new THREE.PlaneGeometry(UNIT, UNIT), 
+                            new THREE.MeshStandardMaterial({map: floorTex})
+                        );
                         floor.rotation.x = -Math.PI/2;
                         floor.position.set(pos.x, 0, pos.z);
                         scene.add(floor);
+
                         if(MAP[z][x] === 2) camera.position.set(pos.x, 1.6, pos.z);
                         if(MAP[z][x] === 3) {
                             const exit = new THREE.Mesh(new THREE.SphereGeometry(1, 8, 8), new THREE.MeshBasicMaterial({color: 0xffffff}));
                             exit.position.set(pos.x, 1.6, pos.z);
                             exit.name = "EXIT";
                             scene.add(exit);
-                            const light = new THREE.PointLight(0xffffff, 10, 8);
+                            const light = new THREE.PointLight(0xffffff, 15, 10);
                             light.position.copy(exit.position);
                             scene.add(light);
                         }
@@ -168,7 +178,7 @@
                 }
             }
 
-            flashlight = new THREE.SpotLight(0xfffabb, 4, 20, Math.PI/6, 0.5, 1);
+            flashlight = new THREE.SpotLight(0xfffabb, 4, 25, Math.PI/6, 0.5, 1);
             scene.add(flashlight);
             scene.add(flashlight.target);
 
@@ -184,81 +194,97 @@
             const ctx = canvas.getContext('2d');
             ctx.fillStyle = c1; ctx.fillRect(0,0,64,64);
             ctx.fillStyle = c2;
-            for(let i=0; i<400; i++) ctx.fillRect(Math.random()*64, Math.random()*64, 2, 2);
+            for(let i=0; i<300; i++) ctx.fillRect(Math.random()*64, Math.random()*64, 2, 2);
             const tex = new THREE.CanvasTexture(canvas);
             tex.magFilter = THREE.NearestFilter;
             return tex;
         }
 
         function setupInputs() {
-            // Start Game
-            const start = document.getElementById('start-prompt');
-            const begin = () => {
+            const startPrompt = document.getElementById('start-prompt');
+            
+            const startAction = () => {
                 if(gameActive) return;
                 gameActive = true;
-                start.style.display = 'none';
-                if(!isMobile) document.body.requestPointerLock();
-                else {
+                startPrompt.style.display = 'none';
+                if(!isMobile) {
+                    document.body.requestPointerLock();
+                } else {
                     document.getElementById('joy-container').style.display = 'block';
                     document.getElementById('look-area').style.display = 'block';
                 }
                 initAudio();
                 runStory();
             };
-            start.addEventListener('click', begin);
-            start.addEventListener('touchstart', begin);
 
-            // Desktop Keys
-            const keys = {w:0, s:0, a:0, d:0};
-            window.onkeydown = (e) => { keys[e.key.toLowerCase()] = 1; updateMove(keys); };
-            window.onkeyup = (e) => { keys[e.key.toLowerCase()] = 0; updateMove(keys); };
-            function updateMove(k) {
-                moveForward = k.w - k.s;
-                moveSide = k.d - k.a;
+            startPrompt.addEventListener('mousedown', startAction);
+            startPrompt.addEventListener('touchstart', startAction);
+
+            // DESKTOP KEYBOARD
+            const keys = {};
+            window.addEventListener('keydown', (e) => keys[e.code] = true);
+            window.addEventListener('keyup', (e) => keys[e.code] = false);
+
+            // Add persistent update for movement
+            function updateKeyMovement() {
+                moveForward = (keys['KeyW'] || keys['ArrowUp'] ? 1 : 0) - (keys['KeyS'] || keys['ArrowDown'] ? 1 : 0);
+                moveSide = (keys['KeyD'] || keys['ArrowRight'] ? 1 : 0) - (keys['KeyA'] || keys['ArrowLeft'] ? 1 : 0);
             }
 
-            // Desktop Mouse
-            window.onmousemove = (e) => {
+            // DESKTOP MOUSE LOOK
+            window.addEventListener('mousemove', (e) => {
                 if (document.pointerLockElement === document.body) {
                     yaw -= e.movementX * 0.003;
                     pitch -= e.movementY * 0.003;
                 }
-            };
+            });
 
-            // Mobile Joystick
+            // MOBILE JOYSTICK (Movement)
             const joy = document.getElementById('joy-container');
             const knob = document.getElementById('joy-knob');
-            joy.ontouchmove = (e) => {
-                const rect = joy.getBoundingClientRect();
+            
+            joy.addEventListener('touchstart', (e) => e.preventDefault());
+            joy.addEventListener('touchmove', (e) => {
+                e.preventDefault();
                 const touch = e.touches[0];
-                const x = touch.clientX - (rect.left + 60);
-                const y = touch.clientY - (rect.top + 60);
-                const dist = Math.min(Math.sqrt(x*x + y*y), 40);
+                const rect = joy.getBoundingClientRect();
+                const centerX = rect.left + rect.width/2;
+                const centerY = rect.top + rect.height/2;
+                const x = touch.clientX - centerX;
+                const y = touch.clientY - centerY;
+                
+                const dist = Math.min(Math.sqrt(x*x + y*y), 45);
                 const angle = Math.atan2(y, x);
+                
                 knob.style.transform = `translate(${Math.cos(angle)*dist}px, ${Math.sin(angle)*dist}px)`;
-                moveSide = (Math.cos(angle) * (dist/40));
-                moveForward = -(Math.sin(angle) * (dist/40));
-            };
-            joy.ontouchend = () => {
+                
+                moveSide = (Math.cos(angle) * (dist/45));
+                moveForward = -(Math.sin(angle) * (dist/45));
+            });
+            joy.addEventListener('touchend', () => {
                 knob.style.transform = `translate(0,0)`;
                 moveForward = 0; moveSide = 0;
-            };
+            });
 
-            // Mobile Look
-            const look = document.getElementById('look-area');
-            let lastTouchX, lastTouchY;
-            look.ontouchstart = (e) => {
-                lastTouchX = e.touches[0].clientX;
-                lastTouchY = e.touches[0].clientY;
-            };
-            look.ontouchmove = (e) => {
-                const dx = e.touches[0].clientX - lastTouchX;
-                const dy = e.touches[0].clientY - lastTouchY;
-                yaw -= dx * 0.005;
-                pitch -= dy * 0.005;
-                lastTouchX = e.touches[0].clientX;
-                lastTouchY = e.touches[0].clientY;
-            };
+            // MOBILE LOOK (Full Screen)
+            const lookArea = document.getElementById('look-area');
+            let lastX, lastY;
+            lookArea.addEventListener('touchstart', (e) => {
+                lastX = e.touches[0].clientX;
+                lastY = e.touches[0].clientY;
+            });
+            lookArea.addEventListener('touchmove', (e) => {
+                const touch = e.touches[0];
+                const dx = touch.clientX - lastX;
+                const dy = touch.clientY - lastY;
+                yaw -= dx * 0.006;
+                pitch -= dy * 0.006;
+                lastX = touch.clientX;
+                lastY = touch.clientY;
+            });
+
+            // Update Loop for logic
+            setInterval(() => { if(!isMobile) updateKeyMovement(); }, 10);
         }
 
         async function runStory() {
@@ -276,8 +302,8 @@
             const osc = audioCtx.createOscillator();
             const g = audioCtx.createGain();
             const filt = audioCtx.createBiquadFilter();
-            osc.type = 'sawtooth'; filt.frequency.value = 60;
-            g.gain.value = 0.05;
+            osc.type = 'sawtooth'; filt.frequency.value = 55;
+            g.gain.value = 0.04;
             osc.connect(filt); filt.connect(g); g.connect(audioCtx.destination);
             osc.start();
         }
@@ -290,24 +316,30 @@
             pitch = Math.max(-1.4, Math.min(1.4, pitch));
             camera.quaternion.setFromEuler(new THREE.Euler(pitch, yaw, 0, 'YXZ'));
 
-            // Movement & Collision
-            const dir = new THREE.Vector3(moveSide, 0, -moveForward).applyEuler(new THREE.Euler(0, yaw, 0)).multiplyScalar(speed = 4 * delta);
-            const nextX = camera.position.clone().add(new THREE.Vector3(dir.x, 0, 0));
-            if(!checkWall(nextX)) camera.position.x = nextX.x;
-            const nextZ = camera.position.clone().add(new THREE.Vector3(0, 0, dir.z));
-            if(!checkWall(nextZ)) camera.position.z = nextZ.z;
+            // MOVEMENT CALCULATION
+            const speed = 4.5 * delta;
+            const moveVec = new THREE.Vector3(moveSide, 0, -moveForward).applyEuler(new THREE.Euler(0, yaw, 0)).multiplyScalar(speed);
+            
+            // X Collision
+            const testX = camera.position.clone().add(new THREE.Vector3(moveVec.x, 0, 0));
+            if(!checkWall(testX)) camera.position.x = testX.x;
+            
+            // Z Collision
+            const testZ = camera.position.clone().add(new THREE.Vector3(0, 0, moveVec.z));
+            if(!checkWall(testZ)) camera.position.z = testZ.z;
 
-            // Flashlight logic
+            // Update Flashlight
             flashlight.position.copy(camera.position);
-            const target = new THREE.Vector3(0,0,-1).applyQuaternion(camera.quaternion).add(camera.position);
-            flashlight.target.position.copy(target);
-            flashlight.intensity = 3 + Math.random() * 0.5;
+            const targetPos = new THREE.Vector3(0,0,-1).applyQuaternion(camera.quaternion).add(camera.position);
+            flashlight.target.position.copy(targetPos);
+            flashlight.intensity = 3.5 + Math.random() * 0.4;
 
-            // Exit logic
+            // Exit Check
             const exit = scene.getObjectByName("EXIT");
             if(exit && camera.position.distanceTo(exit.position) < 1.5) {
                 gameActive = false;
                 document.getElementById('end-screen').style.display = 'flex';
+                document.body.exitPointerLock();
             }
 
             renderer.render(scene, camera);
@@ -315,7 +347,7 @@
 
         function checkWall(pos) {
             for(let w of walls) {
-                if(pos.distanceTo(w.position) < 1.8) return true;
+                if(pos.distanceTo(w.position) < 1.6) return true;
             }
             return false;
         }
