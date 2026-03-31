@@ -374,4 +374,9 @@ textarea {
     resize: vertical;
     font-family: monospace;
 }
+/* Password Strenght Checker */
+.strength-bar {
+    width: 0%;
+    transition: width 0.25s ease, background 0.25s ease;
+}
 
