@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
+    <title>Latency Tester — Toolbox</title>
+
+    <link rel="stylesheet" href="../../global.css" />
+    <link rel="icon" type="image/png" href="../../favicon.png" />
+    <link rel="apple-touch-icon" href="../../favicon.png" />
+</head>
+
+<body>
+<header>
+    <h1><a href="../../" class="home-link">Toolbox</a></h1>
+    <p>Latency Tester</p>
+</header>
+
+<main class="tool-container">
+
+    <section class="tool-section">
+        <h2>Test Latency</h2>
+
+        <input id="url-input" placeholder="Enter URL (e.g., https://google.com)">
+        
+        <div class="button-row">
+            <button id="start-btn">Start Test</button>
+            <button id="clear-btn">Clear</button>
+        </div>
+    </section>
+
+    <section class="tool-section">
+        <h2>Results</h2>
+
+        <pre id="output-box" class="output-box">Enter a URL and click "Start Test".</pre>
+    </section>
+
+</main>
+
+<footer>
+    <p>© 2026 Toolbox — Zykonix</p>
+</footer>
+
+<div id="toast"></div>
+
+<script src="script.js"></script>
+</body>
+</html>
