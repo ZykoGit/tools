@@ -335,4 +335,22 @@ button:hover {
     white-space: pre-wrap;
     font-family: monospace;
 }
+/* CSV Tool */
+.table-container table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-top: 10px;
+}
+
+.table-container th,
+.table-container td {
+    border: 1px solid rgba(255,255,255,0.15);
+    padding: 8px;
+    text-align: left;
+}
+
+.table-container th {
+    background: rgba(255,255,255,0.08);
+    font-weight: 700;
+}
 
