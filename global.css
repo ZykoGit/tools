@@ -354,10 +354,17 @@ button:hover {
     font-weight: 700;
 }
 /* Zip/Unzip Tool */
-.unzip-results a {
-    display: block;
-    margin-top: 8px;
+.unzip-results .unzip-row {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-top: 8px;
 }
+.unzip-results span {
+  font-family: monospace;
+  color: rgba(255,255,255,0.85);
+}
+
 /* CSV JSON Tool */
 textarea {
     width: 100%;
