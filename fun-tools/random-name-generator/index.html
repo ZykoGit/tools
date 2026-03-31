@@ -1,0 +1,73 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
+    <title>Random Name Generator — Toolbox</title>
+
+    <link rel="stylesheet" href="../../global.css" />
+    <link rel="icon" type="image/png" href="../../favicon.png" />
+    <link rel="apple-touch-icon" href="../../favicon.png" />
+</head>
+
+<body>
+<header>
+    <h1><a href="../../" class="home-link">Toolbox</a></h1>
+    <p>Random Name Generator</p>
+</header>
+
+<main class="tool-container">
+
+    <section class="tool-section">
+        <h2>Options</h2>
+
+        <div class="button-row">
+            <label for="category-select">Category:</label>
+            <select id="category-select">
+                <option value="classic_male">Classic Male</option>
+                <option value="classic_female">Classic Female</option>
+                <option value="neutral">Neutral</option>
+                <option value="fantasy">Fantasy</option>
+                <option value="scifi">Sci‑Fi</option>
+                <option value="villain">Villain</option>
+                <option value="cute">Cute</option>
+                <option value="ancient">Ancient</option>
+                <option value="cyberpunk">Cyberpunk</option>
+                <option value="mythic">Mythic</option>
+            </select>
+        </div>
+
+        <div class="button-row">
+            <label for="count-select">How many names?</label>
+            <select id="count-select">
+                <option value="1">1</option>
+                <option value="5" selected>5</option>
+                <option value="10">10</option>
+                <option value="20">20</option>
+            </select>
+        </div>
+
+        <div class="button-row">
+            <button id="generate-btn">Generate</button>
+            <button id="copy-btn">Copy</button>
+        </div>
+    </section>
+
+    <section class="tool-section">
+        <h2>Generated Names</h2>
+
+        <pre id="output-box" class="output-box">Choose a category and click "Generate".</pre>
+    </section>
+
+</main>
+
+<footer>
+    <p>© 2026 Toolbox — Zykonix</p>
+</footer>
+
+<div id="toast"></div>
+
+<script src="script.js"></script>
+</body>
+</html>
