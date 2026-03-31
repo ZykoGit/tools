@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
+    <title>ZIP / Unzip Tool — Toolbox</title>
+
+    <link rel="stylesheet" href="../../global.css" />
+    <link rel="icon" type="image/png" href="../../favicon.png" />
+    <link rel="apple-touch-icon" href="../../favicon.png" />
+</head>
+
+<body>
+<header>
+    <h1><a href="../../" class="home-link">Toolbox</a></h1>
+    <p>ZIP / Unzip Tool</p>
+</header>
+
+<main class="tool-container">
+
+    <section class="tool-section">
+        <h2>Create ZIP</h2>
+
+        <input type="file" id="zip-input" multiple>
+
+        <div class="button-row">
+            <button id="zip-btn">Create ZIP</button>
+            <button id="zip-clear-btn">Clear</button>
+        </div>
+
+        <a id="zip-download" style="display:none;" download="archive.zip">Download ZIP</a>
+    </section>
+
+    <section class="tool-section">
+        <h2>Extract ZIP</h2>
+
+        <input type="file" id="unzip-input" accept=".zip">
+
+        <div class="button-row">
+            <button id="unzip-btn">Extract ZIP</button>
+            <button id="unzip-clear-btn">Clear</button>
+        </div>
+
+        <div id="unzip-results" class="unzip-results">
+            <p>No ZIP extracted.</p>
+        </div>
+    </section>
+
+</main>
+
+<footer>
+    <p>© 2026 Toolbox — Zykonix</p>
+</footer>
+
+<div id="toast"></div>
+
+<script src="script.js"></script>
+</body>
+</html>
