@@ -11,45 +11,74 @@ function showToast(msg) {
     setTimeout(() => toast.classList.remove("show"), 2000);
 }
 
-// Parse EXIF (simple parser for common tags)
-function getEXIF(arrayBuffer) {
+// --- EXIF PARSER (WORKING VERSION) ---
+function readEXIF(arrayBuffer) {
     const view = new DataView(arrayBuffer);
 
-    // Check for JPEG EXIF header
-    if (view.getUint16(0, false) !== 0xFFD8) return null;
+    if (view.getUint16(0, false) !== 0xFFD8) return null; // Not JPEG
 
     let offset = 2;
-    const length = view.byteLength;
+    while (offset < view.byteLength) {
+        const marker = view.getUint16(offset, false);
+        offset += 2;
 
-    while (offset < length) {
-        if (view.getUint16(offset + 2, false) === 0x4578) { // "Exif"
-            return parseTIFF(view, offset + 4 + 2);
+        if (marker === 0xFFE1) { // EXIF marker
+            return parseEXIF(view, offset + 2);
         }
-        offset += 2 + view.getUint16(offset, false);
+
+        const size = view.getUint16(offset, false);
+        offset += size;
     }
 
     return null;
 }
 
-function parseTIFF(view, start) {
-    const little = view.getUint16(start) === 0x4949;
-    const offset = view.getUint32(start + 4, little) + start;
+function parseEXIF(view, start) {
+    const tiff = start + 6;
+    const little = view.getUint16(tiff) === 0x4949;
+    const firstIFD = view.getUint32(tiff + 4, little) + tiff;
 
-    const tags = {};
+    return readIFD(view, firstIFD, little);
+}
+
+function readIFD(view, offset, little) {
     const entries = view.getUint16(offset, little);
+    const tags = {};
 
     for (let i = 0; i < entries; i++) {
-        const entryOffset = offset + 2 + i * 12;
-        const tag = view.getUint16(entryOffset, little);
-        const value = view.getUint32(entryOffset + 8, little);
+        const entry = offset + 2 + i * 12;
+        const tag = view.getUint16(entry, little);
+        const type = view.getUint16(entry + 2, little);
+        const count = view.getUint32(entry + 4, little);
+        let valueOffset = view.getUint32(entry + 8, little);
 
-        tags[tag] = value;
+        if (type === 2) { // ASCII
+            if (count <= 4) {
+                tags[tag] = String.fromCharCode(
+                    view.getUint8(entry + 8),
+                    view.getUint8(entry + 9),
+                    view.getUint8(entry + 10),
+                    view.getUint8(entry + 11)
+                ).replace(/\0/g, "");
+            } else {
+                const str = [];
+                for (let j = 0; j < count - 1; j++) {
+                    str.push(String.fromCharCode(view.getUint8(valueOffset + j)));
+                }
+                tags[tag] = str.join("");
+            }
+        } else if (type === 3) { // SHORT
+            tags[tag] = view.getUint16(entry + 8, little);
+        } else if (type === 4) { // LONG
+            tags[tag] = valueOffset;
+        }
     }
 
     return tags;
 }
 
-// Load image
+// --- MAIN LOGIC ---
+
 fileInput.addEventListener("change", () => {
     const file = fileInput.files[0];
     if (!file) return;
@@ -70,9 +99,8 @@ fileInput.addEventListener("change", () => {
         imgReader.readAsDataURL(file);
 
         // Extract EXIF
-        const exif = getEXIF(arrayBuffer);
+        const exif = readEXIF(arrayBuffer);
 
-        // Build metadata output
         let output = `File Name: ${file.name}
 File Type: ${file.type}
 File Size: ${(file.size / 1024).toFixed(1)} KB`;
@@ -80,8 +108,33 @@ File Size: ${(file.size / 1024).toFixed(1)} KB`;
         const img = new Image();
         img.onload = () => {
             output += `\nDimensions: ${img.width} × ${img.height}`;
-            metadataBox.textContent = output + formatEXIF(exif);
+
+            if (!exif) {
+                metadataBox.textContent = output + "\n\nNo EXIF metadata found.";
+                return;
+            }
+
+            output += "\n\nEXIF Metadata:\n";
+
+            const tagNames = {
+                0x010F: "Camera Make",
+                0x0110: "Camera Model",
+                0x0132: "Date Taken",
+                0x829A: "Exposure Time",
+                0x829D: "Aperture",
+                0x8827: "ISO",
+                0x920A: "Focal Length",
+                0x0112: "Orientation"
+            };
+
+            for (const tag in exif) {
+                const name = tagNames[tag] || `Tag ${tag}`;
+                output += `${name}: ${exif[tag]}\n`;
+            }
+
+            metadataBox.textContent = output;
         };
+
         img.src = imgReader.result;
 
         showToast("Metadata loaded");
@@ -89,19 +142,6 @@ File Size: ${(file.size / 1024).toFixed(1)} KB`;
 
     reader.readAsArrayBuffer(file);
 });
-
-// Format EXIF tags
-function formatEXIF(exif) {
-    if (!exif) return "\n\nNo EXIF metadata found.";
-
-    let out = "\n\nEXIF Metadata:\n";
-
-    for (const tag in exif) {
-        out += `${tag}: ${exif[tag]}\n`;
-    }
-
-    return out;
-}
 
 // Clear
 document.getElementById("clear-btn").addEventListener("click", () => {
