@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
+    <title>Password Strength Checker — Toolbox</title>
+
+    <link rel="stylesheet" href="../../global.css" />
+    <link rel="icon" type="image/png" href="../../favicon.png" />
+    <link rel="apple-touch-icon" href="../../favicon.png" />
+</head>
+
+<body>
+<header>
+    <h1><a href="../../" class="home-link">Toolbox</a></h1>
+    <p>Password Strength Checker</p>
+</header>
+
+<main class="tool-container">
+
+    <section class="tool-section">
+        <h2>Enter Password</h2>
+
+        <input type="password" id="password-input" placeholder="Type a password...">
+
+        <div class="button-row">
+            <button id="copy-btn">Copy</button>
+        </div>
+    </section>
+
+    <section class="tool-section">
+        <h2>Strength</h2>
+
+        <div id="strength-bar" class="strength-bar"></div>
+        <p id="strength-label">Start typing...</p>
+    </section>
+
+    <section class="tool-section">
+        <h2>Details</h2>
+
+        <ul id="details-list" class="details-list">
+            <li>• Length: <span id="len-check">❌</span></li>
+            <li>• Lowercase: <span id="lower-check">❌</span></li>
+            <li>• Uppercase: <span id="upper-check">❌</span></li>
+            <li>• Numbers: <span id="num-check">❌</span></li>
+            <li>• Symbols: <span id="sym-check">❌</span></li>
+        </ul>
+    </section>
+
+</main>
+
+<footer>
+    <p>© 2026 Toolbox — Zykonix</p>
+</footer>
+
+<div id="toast"></div>
+
+<script src="script.js"></script>
+</body>
+</html>
