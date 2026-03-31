@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
+    <title>Image Compressor — Toolbox</title>
+
+    <link rel="stylesheet" href="../../global.css" />
+    <link rel="icon" type="image/png" href="../../favicon.png" />
+    <link rel="apple-touch-icon" href="../../favicon.png" />
+</head>
+
+<body>
+<header>
+    <h1><a href="../../" class="home-link">Toolbox</a></h1>
+    <p>Image Compressor</p>
+</header>
+
+<main class="tool-container">
+
+    <section class="tool-section">
+        <h2>Upload Image</h2>
+
+        <input type="file" id="file-input" accept="image/*">
+
+        <div class="button-row">
+            <button id="clear-btn">Clear</button>
+        </div>
+
+        <img id="preview" style="max-width:100%; display:none; margin-top:10px; border-radius:6px;">
+    </section>
+
+    <section class="tool-section">
+        <h2>Compression Settings</h2>
+
+        <div class="button-row">
+            <label>Quality (1–100)</label>
+            <input type="range" id="quality" min="1" max="100" value="80">
+        </div>
+
+        <div class="button-row">
+            <select id="format">
+                <option value="image/jpeg">JPEG</option>
+                <option value="image/webp">WEBP</option>
+                <option value="image/png">PNG (lossless)</option>
+            </select>
+        </div>
+
+        <div class="button-row">
+            <button id="compress-btn">Compress Image</button>
+        </div>
+
+        <a id="download-link" style="display:none;" download="compressed-image">Download Compressed Image</a>
+    </section>
+
+</main>
+
+<footer>
+    <p>© 2026 Toolbox — Zykonix</p>
+</footer>
+
+<div id="toast"></div>
+
+<script src="script.js"></script>
+</body>
+</html>
