@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
+    <title>UUID Art Generator — Toolbox</title>
+
+    <link rel="stylesheet" href="../../global.css" />
+    <link rel="icon" type="image/png" href="../../favicon.png" />
+    <link rel="apple-touch-icon" href="../../favicon.png" />
+</head>
+
+<body>
+<header>
+    <h1><a href="../../" class="home-link">Toolbox</a></h1>
+    <p>UUID Art Generator</p>
+</header>
+
+<main class="tool-container">
+
+    <section class="tool-section">
+        <h2>Generate Art</h2>
+
+        <div class="button-row">
+            <button id="generate-btn">Generate Art</button>
+            <button id="download-btn">Download PNG</button>
+            <button id="copy-btn">Copy UUID</button>
+        </div>
+
+        <p id="uuid-text" class="uuid-display">UUID will appear here</p>
+
+        <canvas id="art-canvas" width="320" height="320"></canvas>
+    </section>
+
+</main>
+
+<footer>
+    <p>© 2026 Toolbox — Zykonix</p>
+</footer>
+
+<div id="toast"></div>
+
+<script src="script.js"></script>
+</body>
+</html>
