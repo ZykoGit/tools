@@ -12,40 +12,55 @@
 
     <style>
         .center-box {
-            max-width: 600px;
-            margin: 8rem auto;
-            text-align: center;
-            padding: 2rem;
-            background: #1a1a1a;
-            border: 1px solid #333;
-            border-radius: 12px;
-        }
+    max-width: 600px;
+    margin: 8rem auto;
+    text-align: center;
+    padding: 2.5rem;
+    background: rgba(255, 255, 255, 0.06);
+    border: 1px solid rgba(255, 255, 255, 0.15);
+    border-radius: 18px;
+    backdrop-filter: blur(18px);
+    box-shadow: 0 0 28px rgba(0, 0, 0, 0.45),
+                0 0 22px rgba(90, 180, 255, 0.25);
+}
 
-        .center-box h1 {
-            font-size: 4rem;
-            margin-bottom: 1rem;
-            color: #4a90e2;
-        }
+/* HOLOGRAPHIC TITLE */
+.center-box h1 {
+    font-size: 4rem;
+    margin-bottom: 1rem;
+    background: linear-gradient(90deg, #4ac8ff, #b37bff);
+    -webkit-background-clip: text;
+    color: transparent;
+    text-shadow: 0 0 22px rgba(90, 180, 255, 0.5);
+}
 
-        .center-box p {
-            font-size: 1.2rem;
-            opacity: 0.85;
-            margin-bottom: 2rem;
-        }
+/* DESCRIPTION TEXT */
+.center-box p {
+    font-size: 1.25rem;
+    opacity: 0.9;
+    margin-bottom: 2.2rem;
+    color: #e8ecff;
+}
 
-        .home-btn {
-            display: inline-block;
-            padding: 0.8rem 1.6rem;
-            background: #4a90e2;
-            color: white;
-            border-radius: 6px;
-            text-decoration: none;
-            font-size: 1.1rem;
-            transition: 0.2s;
-        }
+/* NEON BUTTON */
+.home-btn {
+    display: inline-block;
+    padding: 0.9rem 1.8rem;
+    background: linear-gradient(90deg, #4ac8ff, #b37bff);
+    color: white;
+    border-radius: 10px;
+    text-decoration: none;
+    font-size: 1.15rem;
+    transition: 0.25s ease;
+    box-shadow: 0 0 16px rgba(90, 180, 255, 0.6);
+}
 
-        .home-btn:hover {
-            background: #357ac9;
+/* BUTTON HOVER GLOW */
+.home-btn:hover {
+    transform: translateY(-3px) scale(1.03);
+    box-shadow: 0 0 26px rgba(179, 123, 255, 0.8);
+}
+
         }
     </style>
 </head>
