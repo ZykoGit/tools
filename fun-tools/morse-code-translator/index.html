@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
+    <title>Morse Code Translator — Toolbox</title>
+
+    <link rel="stylesheet" href="../../global.css" />
+    <link rel="icon" type="image/png" href="../../favicon.png" />
+    <link rel="apple-touch-icon" href="../../favicon.png" />
+</head>
+
+<body>
+<header>
+    <h1><a href="../../" class="home-link">Toolbox</a></h1>
+    <p>Morse Code Translator</p>
+</header>
+
+<main class="tool-container">
+
+    <section class="tool-section">
+        <h2>Text to Morse</h2>
+        <textarea id="text-input" rows="5" placeholder="Type text here..."></textarea>
+        <pre id="morse-output" class="output-box">Morse code will appear here.</pre>
+    </section>
+
+    <section class="tool-section">
+        <h2>Morse to Text</h2>
+        <textarea id="morse-input" rows="5" placeholder="Type Morse here (use . and -, separate letters with spaces, words with /)..."></textarea>
+        <pre id="text-output" class="output-box">Translated text will appear here.</pre>
+    </section>
+
+</main>
+
+<footer>
+    <p>© 2026 Toolbox — Zykonix</p>
+</footer>
+
+<div id="toast"></div>
+
+<script src="script.js"></script>
+</body>
+</html>
