@@ -430,3 +430,10 @@ textarea {
     resize: vertical;
     min-height: 80px;
 }
+/* ASCII Art Generator
+#font-select {
+    width: 100%;
+    padding: 10px;
+    border-radius: 6px;
+    margin: 10px 0 15px 0;
+}
