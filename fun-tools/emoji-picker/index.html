@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
+    <title>Emoji Picker — Toolbox</title>
+
+    <link rel="stylesheet" href="../../global.css" />
+    <link rel="icon" type="image/png" href="../../favicon.png" />
+    <link rel="apple-touch-icon" href="../../favicon.png" />
+</head>
+
+<body>
+<header>
+    <h1><a href="../../" class="home-link">Toolbox</a></h1>
+    <p>Emoji Picker</p>
+</header>
+
+<main class="tool-container">
+
+    <section class="tool-section">
+        <h2>Pick an Emoji</h2>
+
+        <input id="search-input" placeholder="Search emojis...">
+
+        <div id="emoji-grid" class="emoji-grid">
+            <!-- emojis will be injected here -->
+        </div>
+    </section>
+
+    <section class="tool-section">
+        <h2>Selected Emoji</h2>
+        <pre id="output-box" class="output-box">Click an emoji to copy it.</pre>
+    </section>
+
+</main>
+
+<footer>
+    <p>© 2026 Toolbox — Zykonix</p>
+</footer>
+
+<div id="toast"></div>
+
+<script src="script.js"></script>
+</body>
+</html>
