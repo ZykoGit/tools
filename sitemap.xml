@@ -1,0 +1,70 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
+
+    <!-- Homepage -->
+    <url>
+        <loc>https://zykogit.github.io/tools/</loc>
+        <priority>1.0</priority>
+    </url>
+
+    <!-- Developer Tools -->
+    <url><loc>https://zykogit.github.io/tools/dev-tools/json-formatter/</loc></url>
+    <url><loc>https://zykogit.github.io/tools/dev-tools/yaml-json-converter/</loc></url>
+    <url><loc>https://zykogit.github.io/tools/dev-tools/base64-encoder-decoder/</loc></url>
+    <url><loc>https://zykogit.github.io/tools/dev-tools/data-url-encoder-decoder/</loc></url>
+    <url><loc>https://zykogit.github.io/tools/dev-tools/image-data-url-encoder/</loc></url>
+    <url><loc>https://zykogit.github.io/tools/dev-tools/html-blob-launcher/</loc></url>
+    <url><loc>https://zykogit.github.io/tools/dev-tools/jwt-decoder/</loc></url>
+    <url><loc>https://zykogit.github.io/tools/dev-tools/uuid-generator/</loc></url>
+    <url><loc>https://zykogit.github.io/tools/dev-tools/hash-generator/</loc></url>
+    <url><loc>https://zykogit.github.io/tools/dev-tools/diff-checker/</loc></url>
+    <url><loc>https://zykogit.github.io/tools/dev-tools/cron-generator/</loc></url>
+    <url><loc>https://zykogit.github.io/tools/dev-tools/color-converter/</loc></url>
+
+    <!-- Text Tools -->
+    <url><loc>https://zykogit.github.io/tools/text-tools/lorem-ipsum-generator/</loc></url>
+    <url><loc>https://zykogit.github.io/tools/text-tools/markdown-html-converter/</loc></url>
+    <url><loc>https://zykogit.github.io/tools/text-tools/case-converter/</loc></url>
+    <url><loc>https://zykogit.github.io/tools/text-tools/text-analyzer/</loc></url>
+    <url><loc>https://zykogit.github.io/tools/text-tools/duplicate-line-remover/</loc></url>
+    <url><loc>https://zykogit.github.io/tools/text-tools/slug-generator/</loc></url>
+
+    <!-- Math & Science -->
+    <url><loc>https://zykogit.github.io/tools/math-tools/equation-solver/</loc></url>
+    <url><loc>https://zykogit.github.io/tools/math-tools/matrix-calculator/</loc></url>
+    <url><loc>https://zykogit.github.io/tools/math-tools/statistics-calculator/</loc></url>
+    <url><loc>https://zykogit.github.io/tools/math-tools/date-time-calculator/</loc></url>
+    <url><loc>https://zykogit.github.io/tools/math-tools/random-number-generator/</loc></url>
+    <url><loc>https://zykogit.github.io/tools/math-tools/probability-tools/</loc></url>
+
+    <!-- Design Tools -->
+    <url><loc>https://zykogit.github.io/tools/design-tools/image-resizer/</loc></url>
+    <url><loc>https://zykogit.github.io/tools/design-tools/svg-optimizer/</loc></url>
+    <url><loc>https://zykogit.github.io/tools/design-tools/favicon-generator/</loc></url>
+    <url><loc>https://zykogit.github.io/tools/design-tools/gradient-generator/</loc></url>
+    <url><loc>https://zykogit.github.io/tools/design-tools/box-shadow-generator/</loc></url>
+    <url><loc>https://zykogit.github.io/tools/design-tools/border-radius-visualizer/</loc></url>
+
+    <!-- File & Data Tools -->
+    <url><loc>https://zykogit.github.io/tools/file-tools/image-compressor/</loc></url>
+    <url><loc>https://zykogit.github.io/tools/file-tools/csv-viewer/</loc></url>
+    <url><loc>https://zykogit.github.io/tools/file-tools/json-csv-converter/</loc></url>
+    <url><loc>https://zykogit.github.io/tools/file-tools/zip-unzip-tool/</loc></url>
+
+    <!-- Security Tools -->
+    <url><loc>https://zykogit.github.io/tools/security-tools/password-generator/</loc></url>
+    <url><loc>https://zykogit.github.io/tools/security-tools/password-strength-checker/</loc></url>
+    <url><loc>https://zykogit.github.io/tools/security-tools/secure-notes/</loc></url>
+
+    <!-- Web Tools -->
+    <url><loc>https://zykogit.github.io/tools/web-tools/ip-info-viewer/</loc></url>
+    <url><loc>https://zykogit.github.io/tools/web-tools/user-agent-parser/</loc></url>
+    <url><loc>https://zykogit.github.io/tools/web-tools/latency-tester/</loc></url>
+
+    <!-- Fun Tools -->
+    <url><loc>https://zykogit.github.io/tools/fun-tools/uuid-art-generator/</loc></url>
+    <url><loc>https://zykogit.github.io/tools/fun-tools/emoji-picker/</loc></url>
+    <url><loc>https://zykogit.github.io/tools/fun-tools/morse-code-translator/</loc></url>
+
+</urlset>
+
