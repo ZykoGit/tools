@@ -84,6 +84,40 @@ morseInput.addEventListener("input", () => {
     textOutput.textContent = text;
 });
 
+// Copy Morse Output
+document.getElementById("copy-morse-btn").addEventListener("click", async () => {
+    const morse = morseOutput.textContent.trim();
+
+    if (!morse || morse === "Morse code will appear here.") {
+        showToast("Nothing to copy");
+        return;
+    }
+
+    try {
+        await navigator.clipboard.writeText(morse);
+        showToast("Morse copied");
+    } catch {
+        showToast("Copy failed");
+    }
+});
+
+// Copy Text Output
+document.getElementById("copy-text-btn").addEventListener("click", async () => {
+    const text = textOutput.textContent.trim();
+
+    if (!text || text === "Translated text will appear here.") {
+        showToast("Nothing to copy");
+        return;
+    }
+
+    try {
+        await navigator.clipboard.writeText(text);
+        showToast("Text copied");
+    } catch {
+        showToast("Copy failed");
+    }
+});
+
 // Optional: small hint toast on first load
 setTimeout(() => {
     showToast("Type in either box to translate live");
