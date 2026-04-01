@@ -9,11 +9,9 @@ function showToast(msg) {
     setTimeout(() => toast.classList.remove("show"), 2000);
 }
 
-// Load all FIGlet fonts dynamically
-figlet.preloadFonts = true;
-
+// Load FIGlet font list from GitHub (official source)
 async function loadFonts() {
-    const fontListUrl = "https://cdn.jsdelivr.net/npm/figlet@1.5.2/fonts.json";
+    const fontListUrl = "https://raw.githubusercontent.com/patorjk/figlet.js/master/fonts.json";
 
     try {
         const res = await fetch(fontListUrl);
