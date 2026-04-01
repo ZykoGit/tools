@@ -9,11 +9,9 @@
 
 html, body {
     height: 100%;
-    font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI",
-                 Roboto, Oxygen, Ubuntu, Cantarell, "Open Sans", "Helvetica Neue",
-                 sans-serif;
-    background: #111;
-    color: #eee;
+    font-family: "Inter", system-ui, sans-serif;
+    background: radial-gradient(circle at 20% 20%, #0a0f1f, #05060a 60%);
+    color: #e8ecff;
     line-height: 1.6;
 }
 
@@ -21,6 +19,18 @@ html, body {
 body {
     -webkit-font-smoothing: antialiased;
     -moz-osx-font-smoothing: grayscale;
+}
+
+/* --------------------------------------------------
+   GLASS + GLOW VARIABLES
+-------------------------------------------------- */
+:root {
+    --glass-bg: rgba(255, 255, 255, 0.06);
+    --glass-border: rgba(255, 255, 255, 0.15);
+    --neon-blue: #4ac8ff;
+    --neon-purple: #b37bff;
+    --neon-pink: #ff4fa3;
+    --glow: 0 0 18px rgba(90, 180, 255, 0.6);
 }
 
 /* --------------------------------------------------
@@ -32,9 +42,12 @@ header {
 }
 
 header h1 {
-    font-size: 2.8rem;
+    font-size: 3rem;
     font-weight: 700;
-    margin-bottom: 0.5rem;
+    background: linear-gradient(90deg, var(--neon-blue), var(--neon-purple));
+    -webkit-background-clip: text;
+    color: transparent;
+    text-shadow: 0 0 20px rgba(90, 180, 255, 0.4);
 }
 
 header p {
@@ -42,6 +55,9 @@ header p {
     opacity: 0.8;
 }
 
+/* --------------------------------------------------
+   MAIN CONTAINER
+-------------------------------------------------- */
 main {
     width: 100%;
     max-width: 1100px;
@@ -59,35 +75,38 @@ main {
 .category h2 {
     font-size: 1.8rem;
     margin-bottom: 1rem;
-    border-left: 4px solid #4a90e2;
     padding-left: 0.6rem;
+    border-left: 4px solid var(--neon-blue);
+    text-shadow: var(--glow);
 }
 
 /* --------------------------------------------------
-   TOOL GRID
+   TOOL GRID — GLASS CARDS
 -------------------------------------------------- */
 .tool-grid {
     display: grid;
     grid-template-columns: repeat(auto-fit, minmax(230px, 1fr));
-    gap: 1rem;
+    gap: 1.2rem;
 }
 
 .tool-grid a {
     display: block;
-    padding: 1rem;
-    background: #1a1a1a;
-    border: 1px solid #222;
-    border-radius: 8px;
+    padding: 1.2rem;
+    background: var(--glass-bg);
+    border: 1px solid var(--glass-border);
+    border-radius: 14px;
+    backdrop-filter: blur(14px);
     text-decoration: none;
-    color: #eee;
+    color: #e8ecff;
     font-size: 1rem;
-    transition: all 0.2s ease;
+    transition: 0.25s ease;
+    box-shadow: 0 0 12px rgba(0,0,0,0.4);
 }
 
 .tool-grid a:hover {
-    background: #222;
-    border-color: #4a90e2;
-    transform: translateY(-2px);
+    border-color: var(--neon-blue);
+    box-shadow: 0 0 20px rgba(90, 180, 255, 0.6);
+    transform: translateY(-4px) scale(1.02);
 }
 
 /* --------------------------------------------------
@@ -101,109 +120,87 @@ footer {
 }
 
 /* --------------------------------------------------
-   RESPONSIVE
+   UNIVERSAL INPUTS
 -------------------------------------------------- */
-@media (max-width: 600px) {
-    header h1 { font-size: 2.2rem; }
-    header p { font-size: 1rem; }
-    .category h2 { font-size: 1.4rem; }
-    .tool-grid { grid-template-columns: 1fr; }
-}
-
-@media (max-width: 900px) {
-    header h1 { font-size: 2.4rem; }
-    .tool-grid { grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); }
-}
-
-/* --------------------------------------------------
-   TOOL PAGE BASE STYLES
--------------------------------------------------- */
-.tool-container {
-    max-width: 900px;
-    margin: 0 auto;
-}
-
-.tool-section {
-    margin-bottom: 1rem;
-}
-
-.button-row {
-    margin-top: 1rem;
-    display: flex;
-    gap: 1rem;
-}
-
-button {
-    padding: 0.6rem 1.2rem;
-    background: #4a90e2;
-    border: none;
-    border-radius: 6px;
-    color: white;
-    cursor: pointer;
+.tool-section input,
+.tool-section select,
+textarea {
+    width: 100%;
+    padding: 0.7rem 0.9rem;
+    margin: 0.5rem 0 1rem 0;
+    background: rgba(255,255,255,0.05);
+    color: #e8ecff;
+    border: 1px solid rgba(255,255,255,0.15);
+    border-radius: 8px;
     font-size: 1rem;
+    backdrop-filter: blur(10px);
     transition: 0.2s;
 }
 
-button:hover {
-    background: #357ac9;
-}
-
-.sample-box {
-    background: #1a1a1a;
-    padding: 1rem;
-    border-radius: 8px;
-    border: 1px solid #333;
-    overflow-x: auto;
-    white-space: pre-wrap;
-    font-family: monospace;
-}
-
-.home-link {
-    color: #eee;
-    text-decoration: none;
-}
-
-.home-link:hover {
-    text-decoration: underline;
+.tool-section input:focus,
+.tool-section select:focus,
+textarea:focus {
+    border-color: var(--neon-purple);
+    box-shadow: 0 0 12px rgba(179, 123, 255, 0.5);
+    outline: none;
 }
 
 /* --------------------------------------------------
-   UNIVERSAL INPUT + SELECT STYLING
+   BUTTONS — CYBER GLOW
 -------------------------------------------------- */
-.tool-section input,
-.tool-section select {
-    width: 100%;
-    padding: 0.6rem 0.8rem;
-    margin: 0.5rem 0 1rem 0;
-    background: #1a1a1a;
-    color: #eee;
-    border: 1px solid #333;
-    border-radius: 6px;
+button {
+    padding: 0.7rem 1.4rem;
+    background: linear-gradient(90deg, var(--neon-blue), var(--neon-purple));
+    border: none;
+    border-radius: 8px;
+    color: white;
+    cursor: pointer;
     font-size: 1rem;
+    transition: 0.25s;
+    box-shadow: 0 0 14px rgba(90, 180, 255, 0.6);
 }
 
-.button-row input,
-.button-row select {
-    flex: 1;
-    margin: 0;
+button:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 0 22px rgba(179, 123, 255, 0.8);
 }
 
 /* --------------------------------------------------
-   TOAST
+   SAMPLE BOXES / PREVIEWS — GLASS PANELS
+-------------------------------------------------- */
+.sample-box,
+#gradient-preview,
+#shadow-preview,
+#radius-preview,
+#flex-preview,
+#frame-wrapper,
+.metadata-box,
+.table-container table,
+#notes-box {
+    background: var(--glass-bg);
+    border: 1px solid var(--glass-border);
+    border-radius: 12px;
+    backdrop-filter: blur(12px);
+    box-shadow: 0 0 18px rgba(0,0,0,0.4);
+}
+
+/* --------------------------------------------------
+   TOAST — FLOATING NEON TAG
 -------------------------------------------------- */
 #toast {
     position: fixed;
     bottom: 30px;
     left: 50%;
     transform: translateX(-50%);
-    background: #4a90e2;
+    background: linear-gradient(90deg, var(--neon-blue), var(--neon-pink));
     color: white;
     padding: 0.8rem 1.4rem;
-    border-radius: 6px;
+    border-radius: 8px;
     font-size: 1rem;
     opacity: 0;
     pointer-events: none;
     transition: opacity 0.3s ease, transform 0.3s ease;
+    box-shadow: 0 0 20px rgba(255, 79, 163, 0.6);
     z-index: 9999;
 }
 
@@ -213,181 +210,8 @@ button:hover {
 }
 
 /* --------------------------------------------------
-   INDIVIDUAL TOOL TWEAKS
+   EMOJI PICKER — HOLO TILES
 -------------------------------------------------- */
-
-/* Gradient Generator */
-#gradient-preview {
-    width: 100%;
-    height: 200px;
-    border-radius: 8px;
-    border: 1px solid #333;
-    background: #222;
-    margin-bottom: 1rem;
-}
-
-.color-row {
-    display: flex;
-    align-items: center;
-    gap: 1rem;
-    margin-bottom: 0.8rem;
-}
-
-.color-row input[type="color"] {
-    width: 90px;
-    height: 55px;
-    border-radius: 8px;
-    border: 1px solid #444;
-    background: #1a1a1a;
-    cursor: pointer;
-}
-
-.remove-color-btn {
-    padding: 0.4rem 0.8rem;
-    background: #c0392b;
-    border: none;
-    border-radius: 6px;
-    color: white;
-    cursor: pointer;
-}
-
-.remove-color-btn:hover {
-    background: #a83226;
-}
-
-/* Box Shadow Generator */
-#shadow-preview {
-    width: 100%;
-    height: 200px;
-    border-radius: 12px;
-    background: #1a1a1a;
-    border: 1px solid #333;
-    margin-bottom: 1rem;
-}
-
-/* Border Radius Visualizer */
-#radius-preview {
-    width: 100%;
-    height: 200px;
-    border-radius: 20px;
-    background: #1a1a1a;
-    border: 1px solid #333;
-    margin-bottom: 1rem;
-}
-
-/* Flexbox Playground */
-#flex-preview {
-    width: 100%;
-    min-height: 250px;
-    border-radius: 8px;
-    border: 1px solid #333;
-    background: #1a1a1a;
-    display: flex;
-    padding: 1rem;
-    margin-bottom: 1rem;
-}
-
-.flex-item {
-    background: #4a90e2;
-    border-radius: 6px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    color: white;
-    font-weight: bold;
-}
-
-/* Responsive Breakpoint Tester */
-#frame-wrapper {
-    width: 100%;
-    overflow-x: auto;
-    padding: 0.5rem;
-    border-radius: 8px;
-    border: 1px solid #333;
-    background: #050505;
-}
-
-#preview-frame {
-    height: 600px;
-    border: none;
-    background: white;
-    display: block;
-    margin: 0 auto;
-}
-
-/* Metadata Tool */
-.metadata-box {
-    background: rgba(255,255,255,0.05);
-    padding: 15px;
-    border-radius: 8px;
-    white-space: pre-wrap;
-    font-family: monospace;
-}
-
-/* CSV Tool */
-.table-container table {
-    width: 100%;
-    border-collapse: collapse;
-    margin-top: 10px;
-}
-
-.table-container th,
-.table-container td {
-    border: 1px solid rgba(255,255,255,0.15);
-    padding: 8px;
-    text-align: left;
-}
-
-.table-container th {
-    background: rgba(255,255,255,0.08);
-    font-weight: 700;
-}
-
-/* Zip/Unzip Tool */
-.unzip-results .unzip-row {
-  display: flex;
-  align-items: center;
-  gap: 8px;
-  margin-top: 8px;
-}
-.unzip-results span {
-  font-family: monospace;
-  color: rgba(255,255,255,0.85);
-}
-
-/* CSV JSON Tool */
-textarea {
-    width: 100%;
-    height: 180px;
-    padding: 10px;
-    border-radius: 6px;
-    resize: vertical;
-    font-family: monospace;
-}
-
-/* Password Strength Checker */
-.strength-bar {
-    width: 0%;
-    transition: width 0.25s ease, background 0.25s ease;
-}
-
-/* Secure Notes */
-#notes-box {
-    width: 100%;
-    height: 300px;
-    padding: 12px;
-    border-radius: 6px;
-    resize: vertical;
-    font-family: monospace;
-}
-
-/* UUID Art Generator */
-#art-canvas {
-    image-rendering: pixelated;
-    border-radius: 8px;
-}
-
-/* Emoji Picker */
 .emoji-grid {
     display: grid;
     grid-template-columns: repeat(auto-fill, minmax(45px, 1fr));
@@ -397,37 +221,29 @@ textarea {
 
 .emoji-item {
     font-size: 28px;
-    background: rgba(255,255,255,0.05);
+    background: rgba(255,255,255,0.08);
     padding: 10px;
-    border-radius: 8px;
+    border-radius: 10px;
     text-align: center;
     cursor: pointer;
-    transition: 0.15s;
+    transition: 0.2s;
+    backdrop-filter: blur(8px);
 }
 
 .emoji-item:hover {
-    background: rgba(255,255,255,0.15);
-    transform: scale(1.1);
+    background: rgba(255,255,255,0.18);
+    transform: scale(1.15);
+    box-shadow: var(--glow);
 }
 
-#search-input {
-    width: 100%;
-    padding: 10px;
-    border-radius: 6px;
-    margin-bottom: 10px;
+/* --------------------------------------------------
+   RESPONSIVE
+-------------------------------------------------- */
+@media (max-width: 600px) {
+    header h1 { font-size: 2.3rem; }
+    .tool-grid { grid-template-columns: 1fr; }
 }
 
-/* Morse Code Translator */
-.output-box {
-    white-space: pre-wrap;
-    word-wrap: break-word;
-    overflow-wrap: break-word;
-}
-
-/* ASCII Art Generator */
-#font-select {
-    width: 100%;
-    padding: 10px;
-    border-radius: 6px;
-    margin: 10px 0 15px 0;
+@media (max-width: 900px) {
+    header h1 { font-size: 2.6rem; }
 }
