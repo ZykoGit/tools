@@ -430,6 +430,12 @@ textarea {
     resize: vertical;
     min-height: 80px;
 }
+.output-box {
+    white-space: pre-wrap;   /* preserves formatting but wraps lines */
+    word-wrap: break-word;   /* breaks long sequences */
+    overflow-wrap: break-word;
+}
+
 /* ASCII Art Generator
 #font-select {
     width: 100%;
