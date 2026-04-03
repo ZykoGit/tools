@@ -4,7 +4,7 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
 
-    <title>Image Data URL Encoder — Toolbox</title>
+    <title>Image Data URL Encoder/Decoder — Toolbox</title>
 
     <link rel="stylesheet" href="../../global.css" />
     <link rel="icon" type="image/png" href="../../favicon.png" />
@@ -14,27 +14,38 @@
 <body>
 <header>
     <h1><a href="../../" class="home-link">Toolbox</a></h1>
-    <p>Image Data URL Encoder</p>
+    <p>Image Data URL Encoder / Decoder</p>
 </header>
 
 <main class="tool-container">
 
+    <!-- ENCODE SECTION -->
     <section class="tool-section">
-        <h2>Select Image</h2>
+        <h2>Encode Image → Data URL</h2>
 
         <input type="file" id="file-input" accept="image/*">
 
         <div id="preview-box"></div>
-    </section>
 
-    <section class="tool-section">
-        <h2>Data URL Output</h2>
-
-        <textarea id="output" readonly placeholder="Your Base64 Data URL will appear here..."></textarea>
+        <textarea id="output" readonly placeholder="Your Data URL will appear here..."></textarea>
 
         <div class="button-row">
             <button id="copy-btn">Copy</button>
         </div>
+    </section>
+
+    <!-- DECODE SECTION -->
+    <section class="tool-section">
+        <h2>Decode Data URL → Image File</h2>
+
+        <textarea id="decode-input" placeholder="Paste any data URL here..."></textarea>
+
+        <div class="button-row">
+            <button id="decode-btn">Decode</button>
+            <button id="download-btn" disabled>Download</button>
+        </div>
+
+        <div id="decode-preview"></div>
     </section>
 
 </main>
