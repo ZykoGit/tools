@@ -1,90 +1,43 @@
-const fileInput = document.getElementById("file-input");
-const output = document.getElementById("output");
-const previewBox = document.getElementById("preview-box");
-
-const decodeInput = document.getElementById("decode-input");
-const decodePreview = document.getElementById("decode-preview");
-const downloadBtn = document.getElementById("download-btn");
-
-const toast = document.getElementById("toast");
-
-function showToast(msg) {
-    toast.innerText = msg;
-    toast.classList.add("show");
-    setTimeout(() => toast.classList.remove("show"), 2000);
-}
-
-/* ---------------------------
-   ENCODE IMAGE → DATA URL
-----------------------------*/
-fileInput.addEventListener("change", () => {
-    const file = fileInput.files[0];
-    if (!file) return;
-
-    const reader = new FileReader();
-
-    reader.onload = () => {
-        const dataURL = reader.result;
-
-        previewBox.innerHTML = `<img src="${dataURL}" style="max-width:100%; border-radius:8px;">`;
-        output.value = dataURL;
-    };
-
-    reader.readAsDataURL(file);
-});
-
-document.getElementById("copy-btn").addEventListener("click", async () => {
-    if (!output.value.trim()) {
-        showToast("Nothing to copy");
-        return;
-    }
-
-    try {
-        await navigator.clipboard.writeText(output.value);
-        showToast("Copied!");
-    } catch {
-        showToast("Copy failed");
-    }
-});
-
 /* ---------------------------
    DECODE DATA URL → FILE
 ----------------------------*/
-function decodeDataURL(raw) {
+function fullyDecode(raw) {
+    let out = raw.trim();
     try {
-        // Fix double-encoded URLs
-        let decoded = raw.trim();
-        while (decoded.includes("%")) {
-            decoded = decodeURIComponent(decoded);
-        }
-        return decoded;
+        // Keep decoding until nothing changes
+        let prev;
+        do {
+            prev = out;
+            out = decodeURIComponent(out);
+        } while (out !== prev);
     } catch {
-        return raw.trim();
+        // If decodeURIComponent fails, just return what we have
     }
+    return out;
 }
 
 document.getElementById("decode-btn").addEventListener("click", () => {
-    const raw = decodeInput.value.trim();
+    let raw = decodeInput.value.trim();
     if (!raw) {
         showToast("Paste a data URL first");
         return;
     }
 
-    const dataURL = decodeDataURL(raw);
+    // Fix double/triple encoded URLs
+    const dataURL = fullyDecode(raw);
 
     if (!dataURL.startsWith("data:")) {
         showToast("Invalid data URL");
         return;
     }
 
-    // Preview if it's an image
+    // Preview if image
     if (dataURL.startsWith("data:image")) {
         decodePreview.innerHTML = `<img src="${dataURL}" style="max-width:100%; border-radius:8px;">`;
     } else {
         decodePreview.innerHTML = `<p>Decoded file ready for download.</p>`;
     }
 
-    // Enable download button
     downloadBtn.disabled = false;
     downloadBtn.dataset.url = dataURL;
 
@@ -98,26 +51,48 @@ downloadBtn.addEventListener("click", () => {
     const dataURL = downloadBtn.dataset.url;
     if (!dataURL) return;
 
-    const [meta, base64] = dataURL.split(",");
-    const mime = meta.match(/data:(.*?);/)[1] || "application/octet-stream";
+    // Split metadata + base64
+    const parts = dataURL.split(",");
+    if (parts.length < 2) {
+        showToast("Invalid data URL");
+        return;
+    }
 
-    const byteString = atob(base64);
+    const meta = parts[0];
+    const base64 = parts[1];
+
+    // Extract MIME type
+    const mimeMatch = meta.match(/data:(.*?);/);
+    const mime = mimeMatch ? mimeMatch[1] : "application/octet-stream";
+
+    // Convert base64 → binary
+    let byteString;
+    try {
+        byteString = atob(base64);
+    } catch {
+        showToast("Base64 decode failed");
+        return;
+    }
+
     const array = new Uint8Array(byteString.length);
-
     for (let i = 0; i < byteString.length; i++) {
         array[i] = byteString.charCodeAt(i);
     }
 
     const blob = new Blob([array], { type: mime });
 
+    // Pick extension
     const ext = mime.split("/")[1] || "bin";
-    const url = URL.createObjectURL(blob);
 
+    // Force download
+    const url = URL.createObjectURL(blob);
     const a = document.createElement("a");
     a.href = url;
     a.download = `decoded.${ext}`;
+    document.body.appendChild(a);
     a.click();
-
+    a.remove();
     URL.revokeObjectURL(url);
+
     showToast("Downloaded");
 });
