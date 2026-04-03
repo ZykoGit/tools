@@ -1,21 +1,72 @@
+const fileInput = document.getElementById("file-input");
+const output = document.getElementById("output");
+const previewBox = document.getElementById("preview-box");
+
+const decodeInput = document.getElementById("decode-input");
+const decodePreview = document.getElementById("decode-preview");
+const downloadBtn = document.getElementById("download-btn");
+
+const toast = document.getElementById("toast");
+
+function showToast(msg) {
+    toast.innerText = msg;
+    toast.classList.add("show");
+    setTimeout(() => toast.classList.remove("show"), 2000);
+}
+
 /* ---------------------------
-   DECODE DATA URL → FILE
+   ENCODE IMAGE → DATA URL
+----------------------------*/
+fileInput.addEventListener("change", () => {
+    const file = fileInput.files[0];
+    if (!file) return;
+
+    const reader = new FileReader();
+
+    reader.onload = () => {
+        const dataURL = reader.result;
+
+        previewBox.innerHTML = `<img src="${dataURL}" style="max-width:100%; border-radius:8px;">`;
+        output.value = dataURL;
+    };
+
+    reader.readAsDataURL(file);
+});
+
+document.getElementById("copy-btn").addEventListener("click", async () => {
+    if (!output.value.trim()) {
+        showToast("Nothing to copy");
+        return;
+    }
+
+    try {
+        await navigator.clipboard.writeText(output.value);
+        showToast("Copied!");
+    } catch {
+        showToast("Copy failed");
+    }
+});
+
+/* ---------------------------
+   CLEAN + DECODE DATA URL
 ----------------------------*/
 function fullyDecode(raw) {
     let out = raw.trim();
     try {
-        // Keep decoding until nothing changes
         let prev;
         do {
             prev = out;
             out = decodeURIComponent(out);
         } while (out !== prev);
     } catch {
-        // If decodeURIComponent fails, just return what we have
+        // ignore decode errors
     }
     return out;
 }
 
+/* ---------------------------
+   DECODE DATA URL → PREVIEW
+----------------------------*/
 document.getElementById("decode-btn").addEventListener("click", () => {
     let raw = decodeInput.value.trim();
     if (!raw) {
@@ -23,7 +74,6 @@ document.getElementById("decode-btn").addEventListener("click", () => {
         return;
     }
 
-    // Fix double/triple encoded URLs
     const dataURL = fullyDecode(raw);
 
     if (!dataURL.startsWith("data:")) {
@@ -45,54 +95,26 @@ document.getElementById("decode-btn").addEventListener("click", () => {
 });
 
 /* ---------------------------
-   DOWNLOAD DECODED FILE
+   DOWNLOAD
 ----------------------------*/
 downloadBtn.addEventListener("click", () => {
     const dataURL = downloadBtn.dataset.url;
     if (!dataURL) return;
 
-    // Split metadata + base64
-    const parts = dataURL.split(",");
-    if (parts.length < 2) {
-        showToast("Invalid data URL");
-        return;
-    }
-
-    const meta = parts[0];
-    const base64 = parts[1];
-
-    // Extract MIME type
-    const mimeMatch = meta.match(/data:(.*?);/);
+  
+    const mimeMatch = dataURL.match(/^data:(.*?);/);
     const mime = mimeMatch ? mimeMatch[1] : "application/octet-stream";
 
-    // Convert base64 → binary
-    let byteString;
-    try {
-        byteString = atob(base64);
-    } catch {
-        showToast("Base64 decode failed");
-        return;
-    }
 
-    const array = new Uint8Array(byteString.length);
-    for (let i = 0; i < byteString.length; i++) {
-        array[i] = byteString.charCodeAt(i);
-    }
-
-    const blob = new Blob([array], { type: mime });
-
-    // Pick extension
     const ext = mime.split("/")[1] || "bin";
 
-    // Force download
-    const url = URL.createObjectURL(blob);
-    const a = document.createElement("a");
-    a.href = url;
-    a.download = `decoded.${ext}`;
-    document.body.appendChild(a);
-    a.click();
-    a.remove();
-    URL.revokeObjectURL(url);
+
+    const link = document.createElement("a");
+    link.download = `decoded.${ext}`;
+    link.href = dataURL;
+    document.body.appendChild(link);
+    link.click();
+    link.remove();
 
     showToast("Downloaded");
 });
